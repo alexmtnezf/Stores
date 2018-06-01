@@ -1,32 +1,57 @@
 import os
-from flask import Flask
-from flask import jsonify
-#from flask_restful import Api
+
+from flask import Flask, jsonify
+from flask_jwt import JWT, JWTError
+from flask_restful import Api
 
 # Import my Restful api resources
+from resources.item import ItemResource, ItemListResource
+from resources.store import StoreResource, StoreListResource
+from resources.user import UserRegister
+from security import authenticate, identity
 
-#from resources.item import ItemResource, ItemListResource
-#from resources.store import StoreResource, StoreListResource
-
-
+# Creating our flask app and configure it through its config dictionary
 flaskApp = Flask(__name__)
-flaskApp.config['DEBUG'] = True
-flaskApp.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL','sqlite:///data.db')
+flaskApp.config['DEBUG'] = True  # same as: os.environ['FLASK_DEBUG'] = 'True'
+flaskApp.config['ENV'] = 'development'  # same as: os.environ['FLASK_ENV'] = 'development'
+
+# For sqlite, sqlite:///data.db
+flaskApp.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL',
+                                                            'postgresql://test:test@localhost:5432/store')
 flaskApp.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+flaskApp.secret_key = 'jose123'
 
-#Creating our Restful Api
-#api = Api(flaskApp)
+# Creating our Restful Flask Api
+api = Api(flaskApp)
 
-#Adding restful resources
-#api.add_resource(ItemResource, '/item/<string:name>')
-#api.add_resource(StoreResource, '/item/<string:name>')
-#api.add_resource(ItemListResource, '/items')
-#api.add_resource(StoreListResource, '/stores')
+# The jwt object takes or flask app, the authentication and identity handlers and link them all.
+jwt = JWT(flaskApp, authenticate, identity)  # Calling /auth will be
 
 
 @flaskApp.route("/")
 def home():
     return jsonify({"message": "hello world"})
+
+
+# Adding restful resources
+api.add_resource(ItemResource, '/item/<string:name>')
+api.add_resource(StoreResource, '/store/<string:name>')
+api.add_resource(ItemListResource, '/items')
+api.add_resource(StoreListResource, '/stores')
+
+api.add_resource(UserRegister, '/register')
+
+
+@flaskApp.errorhandler(JWTError)
+def errorHandler(error):
+    """
+    This decorated function is going to handle all the JWTError exceptions generated when an authentication token
+    is mandatory in order to use our endpoints
+    :param error:
+    :return:
+    """
+    return jsonify({"message": "We could not authorize. Did you include the valid authorization header?"}), 401
+
 
 
 if __name__ == "__main__":
