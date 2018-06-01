@@ -7,7 +7,7 @@ Only test methods that depends on databases or work with other classes and metho
 
 from models.item import ItemModel
 from models.store import StoreModel
-from tests.integration.integration_base_test import BaseTest
+from tests.base_test import BaseTest
 
 
 class ItemTest(BaseTest):

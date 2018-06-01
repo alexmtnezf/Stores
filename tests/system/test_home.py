@@ -1,9 +1,9 @@
 import json
 
-from .base_test import TestBase
+from tests.base_test import BaseTest
 
 
-class TestHome(TestBase):
+class TestHome(BaseTest):
     def test_home(self):
         with self.client() as c:
             response = c.get('/')
