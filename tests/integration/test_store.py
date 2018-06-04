@@ -58,6 +58,7 @@ class StoreTest(BaseTest):
             store.save_to_db()
             ItemModel('Item1', 19.99, 1).save_to_db()
             expected = {
+                'id': 1,
                 'name': 'test',
                 'items': [{
                     "name": "Item1",
@@ -78,6 +79,7 @@ class StoreTest(BaseTest):
             store = StoreModel(name='test')
             store.save_to_db()
             expected = {
+                'id': 1,
                 'name': 'test',
                 'items': []
             }

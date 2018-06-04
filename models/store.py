@@ -19,7 +19,7 @@ class StoreModel(db.Model, BaseModel):
         self.name = name
 
     def json(self):
-        return {'name': self.name, 'items': [item.json() for item in self.items.all()]}
+        return {'id': self.id, 'name': self.name, 'items': [item.json() for item in self.items.all()]}
 
     def create_item(self, name, price):
         ItemModel(name, price, self.id).save_to_db()

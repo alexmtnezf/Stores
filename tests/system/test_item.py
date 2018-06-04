@@ -25,7 +25,7 @@ class ItemTest(BaseTest):
         with self.app_context():
             with self.client() as cl:
                 StoreModel('Store1').save_to_db()
-                resp = cl.post('/item/test', data={'price': 40.2, 'store_id': 1})
+                resp = cl.post(ItemTest.BASE_API_URL + '/item/test', data={'price': 40.2, 'store_id': 1})
                 self.assertEqual(201, resp.status_code)
                 self.assertDictEqual({'name': 'test', 'price': 40.2, 'store_id': 1}, json.loads(resp.data))
 
@@ -34,7 +34,7 @@ class ItemTest(BaseTest):
             with self.client() as cl:
                 StoreModel('Store1').save_to_db()
                 ItemModel(name='test', price=40.2, store_id=1).save_to_db()
-                resp = cl.post('/item/test', data={'price': 40.2, 'store_id': 1})
+                resp = cl.post(ItemTest.BASE_API_URL + '/item/test', data={'price': 40.2, 'store_id': 1})
                 self.assertEqual(400, resp.status_code)
                 self.assertDictEqual({'message': "An item with name 'test' already exists."}, json.loads(resp.data))
 
@@ -43,13 +43,13 @@ class ItemTest(BaseTest):
             with self.client() as cl:
                 StoreModel('Store1').save_to_db()
                 ItemModel(name='test', price=40.2, store_id=1).save_to_db()
-                resp = cl.delete('/item/test')
+                resp = cl.delete(ItemTest.BASE_API_URL + '/item/test')
                 self.assertEqual(200, resp.status_code)
 
     def test_delete_item_not_found(self):
         with self.app_context():
             with self.client() as cl:
-                resp = cl.delete('/item/test')
+                resp = cl.delete(ItemTest.BASE_API_URL + '/item/test')
                 self.assertEqual(404, resp.status_code)
                 self.assertDictEqual({'message': 'Item not deleted'}, json.loads(resp.data))
 
@@ -59,7 +59,7 @@ class ItemTest(BaseTest):
                 # Create a store and one item for the store
                 StoreModel('test').save_to_db()
                 ItemModel('Item1', 19.99, 1).save_to_db()
-                resp = cl.get('/item/Item1', headers=self.headers)
+                resp = cl.get(ItemTest.BASE_API_URL + '/item/Item1', headers=self.headers)
                 self.assertEqual(200, resp.status_code)
                 self.assertDictEqual(
                     {'name': 'Item1', 'price': 19.99, 'store_id': 1},
@@ -70,13 +70,13 @@ class ItemTest(BaseTest):
         with self.app_context():
             with self.client() as cl:
                 # Not-Authorized code: 401
-                resp = cl.get('/item/test')
+                resp = cl.get(ItemTest.BASE_API_URL + '/item/test')
                 self.assertEqual(401, resp.status_code)
 
     def test_get_item_not_found(self):
         with self.app_context():
             with self.client() as cl:
-                resp = cl.get('/item/Item1', headers=self.headers)
+                resp = cl.get(ItemTest.BASE_API_URL + '/item/Item1', headers=self.headers)
                 self.assertEqual(404, resp.status_code)
                 self.assertDictEqual(
                     {'message': 'Item not found'},
@@ -89,7 +89,7 @@ class ItemTest(BaseTest):
                 # Create a store
                 StoreModel('test').save_to_db()
 
-                resp = cl.put('/item/test', data={'price': 40.2, 'store_id': 1})
+                resp = cl.put(ItemTest.BASE_API_URL + '/item/test', data={'price': 40.2, 'store_id': 1})
                 self.assertEqual(200, resp.status_code)
                 self.assertDictEqual({'name': 'test', 'price': 40.2, 'store_id': 1}, json.loads(resp.data))
 
@@ -102,7 +102,7 @@ class ItemTest(BaseTest):
 
                 self.assertEqual(40.2, ItemModel.find_by_name('test').price)
 
-                resp = cl.put('/item/test', data={'price': 30.2, 'store_id': 1})
+                resp = cl.put(ItemTest.BASE_API_URL + '/item/test', data={'price': 30.2, 'store_id': 1})
                 self.assertEqual(200, resp.status_code)
                 self.assertEqual(30.2, ItemModel.find_by_name('test').price)
                 self.assertDictEqual({'name': 'test', 'price': 30.2, 'store_id': 1}, json.loads(resp.data))
@@ -110,7 +110,7 @@ class ItemTest(BaseTest):
     def test_item_list_empty(self):
         with self.app_context():
             with self.client() as cl:
-                resp = cl.get('/items')
+                resp = cl.get(ItemTest.BASE_API_URL + '/items')
                 self.assertEqual(200, resp.status_code)
                 self.assertDictEqual({'items': []}, json.loads(resp.data))
 
@@ -120,7 +120,7 @@ class ItemTest(BaseTest):
                 # Create a store and item for the store
                 StoreModel('test').save_to_db()
                 ItemModel('test', 40.2, 1).save_to_db()
-                resp = cl.get('/items')
+                resp = cl.get(ItemTest.BASE_API_URL + '/items')
                 self.assertEqual(200, resp.status_code)
                 self.assertDictEqual({'items': [
                     {'name': 'test', 'price': 40.2, 'store_id': 1}

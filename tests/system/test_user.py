@@ -9,7 +9,8 @@ class UserTest(BaseTest):
         with self.app_context():
             with self.client() as c:
                 # Registering the user, data is been sent as a form data
-                response = c.post('/register', data={'name': 'nueva', 'username': 'pepito', 'password': 'abcd'})
+                response = c.post(UserTest.BASE_API_URL + '/register',
+                                  data={'name': 'nueva', 'username': 'pepito', 'password': 'abcd'})
 
                 self.assertEqual(201, response.status_code)
                 self.assertIsNotNone(UserModel.find_by_username('pepito'))
@@ -21,7 +22,8 @@ class UserTest(BaseTest):
                 UserModel('Alex', 'alexmtnezf', '1234').save_to_db()
 
                 # Registering the user, data is been sent as a form data
-                response = c.post('/register', data={'name': 'Alex', 'username': 'alexmtnezf', 'password': '1234'})
+                response = c.post(UserTest.BASE_API_URL + '/register',
+                                  data={'name': 'Alex', 'username': 'alexmtnezf', 'password': '1234'})
                 self.assertEqual(400, response.status_code)
                 self.assertDictEqual({"message": "A user with that username already exists"},
                                      json.loads(response.data))
@@ -30,7 +32,8 @@ class UserTest(BaseTest):
         with self.app_context():
             with self.client() as c:
                 # Registering the user, data is been sent as a form data
-                c.post('/register', data={'name': 'Alex', 'username': 'alexmtnezf', 'password': '1234'})
+                c.post(UserTest.BASE_API_URL + '/register',
+                       data={'name': 'Alex', 'username': 'alexmtnezf', 'password': '1234'})
 
                 # Login the user, data is been sent as a json data payload
                 auth_response = c.post('/auth', data=json.dumps({

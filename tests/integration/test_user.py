@@ -17,17 +17,17 @@ class UserTest(BaseTest):
         :return: None
         """
         with self.app_context():
-            store = UserModel('Alex', 'alexmtnezf', '12345')
+            user = UserModel('Alex', 'alexmtnezf', '12345')
             self.assertIsNone(UserModel.find_by_name('Alex'))
             self.assertIsNone(UserModel.find_by_username('alexmtnezf'))
             self.assertIsNone(UserModel.find_by_id(1))
 
-            store.save_to_db()
+            user.save_to_db()
             self.assertIsNotNone(UserModel.find_by_name('Alex'))
             self.assertIsNotNone(UserModel.find_by_username('alexmtnezf'))
             self.assertIsNotNone(UserModel.find_by_id(1))
 
-            store.delete_from_db()
+            user.delete_from_db()
             self.assertIsNone(UserModel.find_by_name('Alex'))
             self.assertIsNone(UserModel.find_by_username('alexmtnezf'))
             self.assertIsNone(UserModel.find_by_id(1))

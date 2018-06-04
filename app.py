@@ -16,31 +16,31 @@ flaskApp.config['DEBUG'] = True  # same as: os.environ['FLASK_DEBUG'] = 'True'
 flaskApp.config['ENV'] = 'development'  # same as: os.environ['FLASK_ENV'] = 'development'
 
 # For sqlite, sqlite:///data.db
-flaskApp.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL',
-                                                            'postgresql://test:test@localhost:5432/store')
+# For postgresql: 'postgresql://test:test@localhost:5432/store'
+flaskApp.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
 flaskApp.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# flaskApp.config['PROPAGATE_EXCEPTIONS'] = True
 flaskApp.secret_key = 'jose123'
 
 # Creating our Restful Flask Api
+flaskApp.config['BASE_API_URL'] = '/api'
 api = Api(flaskApp)
 
 # The jwt object takes or flask app, the authentication and identity handlers and link them all.
-jwt = JWT(flaskApp, authenticate, identity)  # Calling /auth will be
-
-
-@flaskApp.route("/")
-def home():
-    return jsonify({"message": "hello world"})
-
+jwt = JWT(flaskApp, authenticate, identity)  # Calling /auth we'll use Flask-JWT to verify the token is correct.
 
 # Adding restful resources
-api.add_resource(ItemResource, '/item/<string:name>')
-api.add_resource(StoreResource, '/store/<string:name>')
-api.add_resource(ItemListResource, '/items')
-api.add_resource(StoreListResource, '/stores')
+api.add_resource(ItemResource, flaskApp.config['BASE_API_URL'] + '/item/<string:name>')
+api.add_resource(StoreResource, flaskApp.config['BASE_API_URL'] + '/store/<string:name>')
+api.add_resource(ItemListResource, flaskApp.config['BASE_API_URL'] + '/items')
+api.add_resource(StoreListResource, flaskApp.config['BASE_API_URL'] + '/stores')
 
-api.add_resource(UserRegister, '/register')
+api.add_resource(UserRegister, flaskApp.config['BASE_API_URL'] + '/register')
 
+
+@flaskApp.route('/')
+def home():
+    return jsonify({'message': 'hello world'})
 
 @flaskApp.errorhandler(JWTError)
 def errorHandler(error):
