@@ -9,7 +9,7 @@ class TestHome(BaseTest):
             response = c.get('/')
             self.assertEqual(200, response.status_code)
             self.assertDictEqual({"message": "hello world"},
-                                 json.loads(str(response.get_data(), "utf-8")),
+                                 json.loads(response.get_data().decode("utf-8")),
                                  "The response {} is not the same as expected {}".format(
-                                     json.loads(str(response.get_data(), "utf-8")),
+                                     json.loads(response.get_data().decode("utf-8")),
                                      {"message": "hello world"}))
