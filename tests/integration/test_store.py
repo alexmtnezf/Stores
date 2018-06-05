@@ -18,6 +18,13 @@ class StoreTest(BaseTest):
         :return: None
         """
         store = StoreModel('store1')
+        expected = {
+            "id": None,
+            "name": "store1",
+            "items": []
+        }
+
+        self.assertEqual(store.json(), expected)
         self.assertListEqual([], store.items.all())
         self.assertEqual(0, len(store.items.all()))
 

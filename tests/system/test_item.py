@@ -18,7 +18,7 @@ class ItemTest(BaseTest):
                     'username': 'alexmtnezf',
                     'password': '1234'}), headers={'Content-Type': 'application/json'})
 
-                jwt_token = json.loads(auth_resp.data).get('access_token')
+                jwt_token = json.loads(auth_resp.data, encoding="utf-8").get('access_token')
                 self.headers = {'Authorization': 'JWT {}'.format(jwt_token)}
 
     def test_create_item(self):

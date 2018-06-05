@@ -12,7 +12,7 @@ class StoreTest(BaseTest):
             with self.client() as cl:
                 resp = cl.post(StoreTest.BASE_API_URL + '/store/test')
                 self.assertEqual(201, resp.status_code)
-                self.assertDictEqual({'id': 1, 'name': 'test', 'items': []}, json.loads(resp.data))
+                self.assertDictEqual({'id': 1, 'name': 'test', 'items': []}, json.loads(resp.data, encoding="utf-8"))
 
     def test_create_store_duplicated(self):
         with self.app_context():
@@ -20,7 +20,8 @@ class StoreTest(BaseTest):
                 StoreModel('test').save_to_db()
                 resp = cl.post(StoreTest.BASE_API_URL + '/store/test')
                 self.assertEqual(400, resp.status_code)
-                self.assertDictEqual({'message': "A store with name 'test' already exists."}, json.loads(resp.data))
+                self.assertDictEqual({'message': "A store with name 'test' already exists."},
+                                     json.loads(resp.data, encoding="utf-8"))
 
     def test_delete_store(self):
         with self.app_context():
@@ -28,14 +29,14 @@ class StoreTest(BaseTest):
                 StoreModel('test').save_to_db()
                 resp = cl.delete(StoreTest.BASE_API_URL + '/store/test')
                 self.assertEqual(200, resp.status_code)
-                self.assertDictEqual({'message': 'Store deleted'}, json.loads(resp.data))
+                self.assertDictEqual({'message': 'Store deleted'}, json.loads(resp.data, encoding="utf-8"))
 
     def test_delete_store_not_found(self):
         with self.app_context():
             with self.client() as cl:
                 resp = cl.delete(StoreTest.BASE_API_URL + '/store/test')
                 self.assertEqual(404, resp.status_code)
-                self.assertDictEqual({'message': 'Store not deleted'}, json.loads(resp.data))
+                self.assertDictEqual({'message': 'Store not deleted'}, json.loads(resp.data, encoding="utf-8"))
 
     def test_find_store(self):
         with self.app_context():
@@ -49,10 +50,10 @@ class StoreTest(BaseTest):
                     'username': 'alexmtnezf',
                     'password': '1234'}), headers={'Content-Type': 'application/json'})
 
-                jwt_token = json.loads(auth_resp.data).get('access_token')
+                jwt_token = json.loads(auth_resp.data, encoding="utf-8").get('access_token')
                 resp = cl.get(StoreTest.BASE_API_URL + '/store/test', headers={'Authorization': 'JWT ' + jwt_token})
                 self.assertEqual(200, resp.status_code)
-                self.assertEqual({'id': 1, 'name': 'test', 'items': []}, json.loads(resp.data))
+                self.assertEqual({'id': 1, 'name': 'test', 'items': []}, json.loads(resp.data, encoding="utf-8"))
 
     def test_find_store_with_items(self):
         with self.app_context():
@@ -67,7 +68,7 @@ class StoreTest(BaseTest):
                     'username': 'alexmtnezf',
                     'password': '1234'}), headers={'Content-Type': 'application/json'})
 
-                jwt_token = json.loads(auth_resp.data).get('access_token')
+                jwt_token = json.loads(auth_resp.data, encoding="utf-8").get('access_token')
                 resp = cl.get(StoreTest.BASE_API_URL + '/store/test', headers={'Authorization': 'JWT ' + jwt_token})
                 self.assertEqual(200, resp.status_code)
                 self.assertEqual({
@@ -77,7 +78,7 @@ class StoreTest(BaseTest):
                         'name': 'Item1',
                         'price': 19.99,
                         'store_id': 1
-                    }]}, json.loads(resp.data))
+                    }]}, json.loads(resp.data, encoding="utf-8"))
 
     def test_find_store_not_found(self):
         with self.app_context():
@@ -89,7 +90,7 @@ class StoreTest(BaseTest):
                     'username': 'alexmtnezf',
                     'password': '1234'}), headers={'Content-Type': 'application/json'})
 
-                jwt_token = json.loads(auth_resp.data).get('access_token')
+                jwt_token = json.loads(auth_resp.data, encoding="utf-8").get('access_token')
                 resp = cl.get(StoreTest.BASE_API_URL + '/store/test', headers={'Authorization': 'JWT ' + jwt_token})
                 self.assertEqual(404, resp.status_code)
 
@@ -109,7 +110,7 @@ class StoreTest(BaseTest):
                 self.assertDictEqual({
                     'stores': [
                         {'id': 1, 'name': 'test', 'items': []}
-                    ]}, json.loads(resp.data))
+                    ]}, json.loads(resp.data, encoding="utf-8"))
 
     def test_store_list_with_items(self):
         with self.app_context():
@@ -127,4 +128,4 @@ class StoreTest(BaseTest):
                             {'name': 'Item1', 'price': 19.99, 'store_id': 1}
                         ]
                     }]
-                }, json.loads(resp.data))
+                }, json.loads(resp.data, encoding="utf-8"))
