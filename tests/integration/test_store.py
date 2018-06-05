@@ -123,6 +123,6 @@ class StoreTest(BaseTest):
             store.save_to_db()
             item = ItemModel('Item1', 19.99, 1).save_to_db() # This item has id = 1
             self.assertEqual(1, item.id)
-            
+
             self.assertRaises(NonExistentItemModelError,
                                   store.delete_item, 2) # Deleting an item with id = 2, raises NonExistentItemModelError
