@@ -14,7 +14,8 @@ class UserTest(BaseTest):
 
                 self.assertEqual(201, response.status_code)
                 self.assertIsNotNone(UserModel.find_by_username('pepito'))
-                self.assertDictEqual({"message": "User created successfully."}, json.loads(response.get_data()))
+                self.assertDictEqual({"message": "User created successfully."},
+                                     json.loads(response.get_data().decode('utf-8')))
 
     def test_register_duplicate_user(self):
         with self.app_context():
@@ -26,7 +27,7 @@ class UserTest(BaseTest):
                                   data={'name': 'Alex', 'username': 'alexmtnezf', 'password': '1234'})
                 self.assertEqual(400, response.status_code)
                 self.assertDictEqual({"message": "A user with that username already exists"},
-                                     json.loads(response.data))
+                                     json.loads(response.data.decode('utf-8')))
 
     def test_register_and_login(self):
         with self.app_context():
@@ -42,7 +43,7 @@ class UserTest(BaseTest):
 
                 # The response from Flask-JWT authentication is a string that is decoded and gives us a dictionary
                 # with a key that has the access token, that needs to be sent in the following requests
-                self.assertIn('access_token', json.loads(auth_response.data).keys())  # ['access_token']
+                self.assertIn('access_token', json.loads(auth_response.data.decode('utf-8')).keys())  # ['access_token']
 
     def test_user_can_login(self):
         pass
