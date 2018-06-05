@@ -4,7 +4,7 @@ StoreModel class
 
 from db import db
 from models.base_model import BaseModel
-from models.item import ItemModel
+from models.item import ItemModel, NonExistentItemModelError
 
 
 class StoreModel(db.Model, BaseModel):
@@ -23,3 +23,11 @@ class StoreModel(db.Model, BaseModel):
 
     def create_item(self, name, price):
         ItemModel(name, price, self.id).save_to_db()
+
+    def delete_item(self, id):
+        item = ItemModel.find_by(id=id, store_id=self.id).first()
+        if item:
+            item.delete_from_db()
+        else:
+            raise NonExistentItemModelError()
+

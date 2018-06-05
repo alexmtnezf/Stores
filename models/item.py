@@ -1,6 +1,7 @@
 from db import db
 from .base_model import BaseModel
-
+class NonExistentItemModelError(Exception):
+    pass
 
 class ItemModel(db.Model, BaseModel):
     __tablename__ = 'items'
