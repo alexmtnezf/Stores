@@ -50,7 +50,7 @@ class StoreTest(BaseTest):
                     'username': 'alexmtnezf',
                     'password': '1234'}), headers={'Content-Type': 'application/json'})
 
-                jwt_token = json.loads(auth_resp.data, encoding="utf-8").get('access_token')
+                jwt_token = json.loads(auth_resp.data.decode('utf-8')).get('access_token')
                 resp = cl.get(StoreTest.BASE_API_URL + '/store/test', headers={'Authorization': 'JWT ' + jwt_token})
                 self.assertEqual(200, resp.status_code)
                 self.assertEqual({'id': 1, 'name': 'test', 'items': []}, json.loads(resp.data.decode('utf-8')))
