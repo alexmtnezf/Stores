@@ -1,6 +1,9 @@
 {
   "name": "Stores",
   "description": "An app.json file describes the environment and add-ons required to run an app on Heroku. Fields marked with * require a value.",
+  "image": "heroku/python",
+  "repository": "https://github.com/alexmtnezf/Stores/Stores.git",
+  "keywords": ["python", "flask" ],
   "scripts": {
   },
   "env": {
@@ -15,10 +18,5 @@
   },
   "addons": [
     "heroku-postgresql"
-  ],
-  "buildpacks": [
-    {
-      "url": "python-3.6"
-    }
   ]
 }

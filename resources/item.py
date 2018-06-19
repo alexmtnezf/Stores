@@ -42,8 +42,7 @@ class ItemResource(Resource):
         item = ItemModel.find_by_name(name)
         if item:
             item.delete_from_db()
-            return {'message': 'Item deleted'}
-        return {'message': 'Item not deleted'}, 404
+        return {'message': 'Item deleted'}
 
     def put(self, name):
         data = ItemResource.parser.parse_args()

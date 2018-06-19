@@ -3,3 +3,5 @@
 .idea/*.iml
 __pycache__/
 data.db
+db.sqlite3
+local.env

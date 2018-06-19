@@ -18,9 +18,9 @@ def authenticate(username, password):
 
 
 def identity(payload):
-    """
+    """er id is decoded and put in payload to get the UserModel object
     Function that gets the JWT in the request Authorization header, using Flask-JWT,
-    if the token is verified that is correct, the user id is decoded and put in payload to get the UserModel object
+    if the token is verified that is correct, the us
     :param payload: A dictionary provided by Flask-JWT after the token has been decoded,
                     with 'identity' as key and value the user id.
     :return: A UserModel object

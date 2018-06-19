@@ -12,6 +12,7 @@ flask-restful = "*"
 flask-jwt = "*"
 flask-sqlalchemy = "*"
 psycopg2 = "*"
+uwsgi = "*"
 
 
 [dev-packages]
