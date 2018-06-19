@@ -33,7 +33,7 @@ class Env(object):
     ENVIRON = os.environ
     NOTSET = NoValue()
     BOOLEAN_TRUE_STRINGS = ('true', 'on', 'ok', 'y', 'yes', '1')
-    URL_CLASS = urllib.parse.ParseResult
+    #URL_CLASS = urllib.parse.ParseResult
     DEFAULT_DATABASE_ENV = 'DATABASE_URL'
 
     def __init__(self, **scheme):
