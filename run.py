@@ -12,7 +12,7 @@ else:
     port = 3000
 
 # Gunicorn configs
-bind = "0.0.0.0:{}".format(port)
+#bind = "0.0.0.0:{}".format(port)
 workers = multiprocessing.cpu_count() * 2 + 1
 
 # End
