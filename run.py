@@ -1,6 +1,6 @@
 import multiprocessing
 
-from app import flaskApp as app
+from app import flaskApp
 from db import db
 
 # Gunicorn configs
@@ -10,8 +10,8 @@ workers = multiprocessing.cpu_count() * 2 + 1
 # End
 
 # Flask app configuration
-db.init_app(app)
+db.init_app(flaskApp)
 
-@app.before_first_request
+@flaskApp.before_first_request
 def create_tables():
     db.create_all()
