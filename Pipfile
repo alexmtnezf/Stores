@@ -13,7 +13,9 @@ flask-jwt = "*"
 flask-sqlalchemy = "*"
 psycopg2 = "*"
 uwsgi = "*"
+pipenv = "*"
 
 
 [dev-packages]
+pytest = "*"
 
