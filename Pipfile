@@ -6,14 +6,15 @@ name = "pypi"
 
 
 [packages]
+
 pathlib = "*"
 flask = "*"
 flask-restful = "*"
 flask-jwt = "*"
 flask-sqlalchemy = "*"
-psycopg2 = "*"
-gunicorn = "*"
+"psycopg2" = "*"
+
 
 [dev-packages]
-pytest = "*"
 
+pytest = "*"
