@@ -53,8 +53,8 @@ class ItemTest(BaseTest):
         with self.app_context():
             with self.client() as cl:
                 resp = cl.delete(ItemTest.BASE_API_URL + '/item/test')
-                self.assertEqual(404, resp.status_code)
-                self.assertDictEqual({'message': 'Item not deleted'}, json.loads(resp.data.decode('utf-8')))
+                self.assertEqual(200, resp.status_code)
+                self.assertDictEqual({'message': 'Item deleted'}, json.loads(resp.data.decode('utf-8')))
 
     def test_get_item(self):
         with self.app_context():
