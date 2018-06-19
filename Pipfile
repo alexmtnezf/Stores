@@ -13,11 +13,13 @@ flask-restful = "*"
 flask-jwt = "*"
 flask-sqlalchemy = "*"
 "psycopg2" = "*"
+twilio = "*"
 
 
 [dev-packages]
 
 pytest = "*"
+
 
 [requires]
 
