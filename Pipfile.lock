@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b0eeb14e7e42bb0cf67dc66666eec381064abf5920f3ef5f3692b117fecfc39b"
+            "sha256": "32b7204f9dd2ebfbdbfce65ddb39dde45b07fa71826ba93ab5a36d3c4ba06908"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -33,13 +33,6 @@
                 "sha256:7849749cf00ae0680ad2bdfe4419c7a662bef19c03691a19e008c8b9a5267802"
             ],
             "version": "==3.0.2"
-        },
-        "certifi": {
-            "hashes": [
-                "sha256:9fa520c1bacfb634fa7af20a76bcbd3d5fb390481724c597da32c719a7dca4b0",
-                "sha256:13e698f54293db9f89122b0581843a782ad0934a4fe0172d2a980ba77fc61bb7"
-            ],
-            "version": "==2018.4.16"
         },
         "click": {
             "hashes": [
@@ -100,13 +93,6 @@
             ],
             "version": "==1.0.1"
         },
-        "pipenv": {
-            "hashes": [
-                "sha256:e96d5bfa6822a17b2200d455aa5f9002c14361c50df1b1e51921479d7c09e741",
-                "sha256:04b9a8b02a3ff12a5502b335850cfdb192adcfd1d6bbdb7a7c47cae9ab9ddece"
-            ],
-            "version": "==2018.5.18"
-        },
         "psycopg2": {
             "hashes": [
                 "sha256:36f8f9c216fcca048006f6dd60e4d3e6f406afde26cfb99e063f137070139eaf",
@@ -165,20 +151,6 @@
                 "sha256:2d5f08f714a886a1382c18be501e614bce50d362384dc089474019ce0768151c"
             ],
             "version": "==1.2.8"
-        },
-        "virtualenv": {
-            "hashes": [
-                "sha256:2ce32cd126117ce2c539f0134eb89de91a8413a29baac49cbab3eb50e2026669",
-                "sha256:ca07b4c0b54e14a91af9f34d0919790b016923d157afda5efdde55c96718f752"
-            ],
-            "version": "==16.0.0"
-        },
-        "virtualenv-clone": {
-            "hashes": [
-                "sha256:4507071d81013fd03ea9930ec26bc8648b997927a11fa80e8ee81198b57e0ac7",
-                "sha256:b5cfe535d14dc68dfc1d1bb4ac1209ea28235b91156e2bba8e250d291c3fb4f8"
-            ],
-            "version": "==0.3.0"
         },
         "werkzeug": {
             "hashes": [
