@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "e27e465dbae9f485440005f42c1caf9eae1ae52b3e710dd7a640d1b9839789c3"
+            "sha256": "561fc11816f668caba9ca9b1705b93c5f6206dc2f2e3d92c70a6480a7eb1e244"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -174,7 +174,6 @@
                 "sha256:63b52e3c866428a224f97cab011de738c36aec0185aa91cfacd418b5d58911d1",
                 "sha256:ec22d826a36ed72a7358ff3fe56cbd4ba69dd7a6718ffd450ff0e9df7a47ce6a"
             ],
-            "markers": "python_version >= '3.0'",
             "version": "==2.19.1"
         },
         "six": {
@@ -192,10 +191,10 @@
         },
         "twilio": {
             "hashes": [
-                "sha256:d1bedca22559e10c076fec036f752d4192e9e10b9a0536497a9539a7990da146",
-                "sha256:ab1cf2a6d4bf3ae50ba3807fa1be442129b423426193d8b3f288747819c38815"
+                "sha256:d7284abd5678d5586c935f721d1b5b331f8b86d5a92e30d3a204c893d6f5200f",
+                "sha256:207bca2803b015a33fade8bfada9c0e56ddb1f3f96c391388a4b31643734697e"
             ],
-            "version": "==6.14.4"
+            "version": "==6.14.5"
         },
         "urllib3": {
             "hashes": [
