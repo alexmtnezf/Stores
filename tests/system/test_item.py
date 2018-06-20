@@ -7,6 +7,7 @@ from tests.base_test import BaseTest
 
 
 class ItemTest(BaseTest):
+    USER_ID = None
     def setUp(self):
         super(ItemTest, self).setUp()
         with self.app_context():
@@ -19,14 +20,18 @@ class ItemTest(BaseTest):
                     'password': '1234'}), headers={'Content-Type': 'application/json'})
 
                 data = auth_resp.data.decode('utf-8')  # Decode binary buffer before parsing it to JSON objects
-                jwt_token = json.loads(data).get('access_token')
+                data = json.loads(data)
+                jwt_token = data.get('access_token')
+                ItemTest.USER_ID = data.get('user_id')
+
                 self.headers = {'Authorization': 'JWT {}'.format(jwt_token)}
 
     def test_create_item(self):
         with self.app_context():
             with self.client() as cl:
                 StoreModel('Store1').save_to_db()
-                resp = cl.post(ItemTest.BASE_API_URL + '/item/test', data={'price': 40.2, 'store_id': 1})
+                resp = cl.post(ItemTest.BASE_API_URL + '/item/test', data={
+                    'price': 40.2, 'store_id': 1, 'user_id': ItemTest.USER_ID})
                 self.assertEqual(201, resp.status_code)
                 self.assertDictEqual({'name': 'test', 'price': 40.2, 'store_id': 1},
                                      json.loads(resp.data.decode('utf-8')))
@@ -92,7 +97,8 @@ class ItemTest(BaseTest):
                 # Create a store
                 StoreModel('test').save_to_db()
 
-                resp = cl.put(ItemTest.BASE_API_URL + '/item/test', data={'price': 40.2, 'store_id': 1})
+                resp = cl.put(ItemTest.BASE_API_URL + '/item/test',
+                              data={'price': 40.2, 'store_id': 1, 'user_id': ItemTest.USER_ID})
                 self.assertEqual(200, resp.status_code)
                 self.assertDictEqual({'name': 'test', 'price': 40.2, 'store_id': 1},
                                      json.loads(resp.data.decode('utf-8')))
@@ -106,7 +112,8 @@ class ItemTest(BaseTest):
 
                 self.assertEqual(40.2, ItemModel.find_by_name('test').price)
 
-                resp = cl.put(ItemTest.BASE_API_URL + '/item/test', data={'price': 30.2, 'store_id': 1})
+                resp = cl.put(ItemTest.BASE_API_URL + '/item/test',
+                              data={'price': 30.2, 'store_id': 1, 'user_id': ItemTest.USER_ID})
                 self.assertEqual(200, resp.status_code)
                 self.assertEqual(30.2, ItemModel.find_by_name('test').price)
                 self.assertDictEqual({'name': 'test', 'price': 30.2, 'store_id': 1},
