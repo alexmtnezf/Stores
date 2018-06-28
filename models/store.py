@@ -1,13 +1,19 @@
 """
-StoreModel class
+models/store.py
+
+Module that contains the model definition for stores in a SQLAlchemy database.
 """
 
 from db import db
+from exceptions import ItemNotFoundError
 from models.base_model import BaseModel
-from models.item import ItemModel, NonExistentItemModelError
+from models.item import ItemModel
 
 
 class StoreModel(db.Model, BaseModel):
+    """
+    StoreModel class
+    """
     __tablename__ = 'stores'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -19,7 +25,11 @@ class StoreModel(db.Model, BaseModel):
         self.name = name
 
     def json(self):
-        return {'id': self.id, 'name': self.name, 'items': [item.json() for item in self.items.all()]}
+        return {
+            'id': self.id,
+            'name': self.name,
+            'items': [item.json() for item in self.items.all()]
+        }
 
     def create_item(self, name, price):
         ItemModel(name, price, self.id).save_to_db()
@@ -29,5 +39,4 @@ class StoreModel(db.Model, BaseModel):
         if item:
             item.delete_from_db()
         else:
-            raise NonExistentItemModelError()
-
+            raise ItemNotFoundError()

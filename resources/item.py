@@ -1,3 +1,8 @@
+"""
+resources/item.py
+
+Module that contains api resources regarding items information management.
+"""
 from flask_jwt_extended import jwt_required, jwt_optional, get_jwt_identity, fresh_jwt_required, get_jwt_claims
 from flask_restful import Resource, reqparse
 from twilio.base.exceptions import TwilioRestException

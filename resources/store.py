@@ -1,3 +1,8 @@
+"""
+resources/store.py
+
+Module that contains api resources regarding stores information management.
+"""
 from flask_jwt_extended import jwt_required, get_jwt_claims, get_jwt_identity, jwt_optional, fresh_jwt_required
 from flask_restful import Resource, abort
 
