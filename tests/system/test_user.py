@@ -20,7 +20,7 @@ class UserTest(BaseTest):
     def test_register_duplicate_user(self):
         with self.app_context():
             with self.client() as c:
-                UserModel('Alex', 'alexmtnezf', '1234').save_to_db()
+                UserModel('Alex', 'alexmtnezf', '1234', is_admin=True).save_to_db()
 
                 # Registering the user, data is been sent as a form data
                 response = c.post(UserTest.BASE_API_URL + '/register',
@@ -37,7 +37,7 @@ class UserTest(BaseTest):
                        data={'name': 'Alex', 'username': 'alexmtnezf', 'password': '1234'})
 
                 # Login the user, data is been sent as a json data payload
-                auth_response = c.post('/auth', data=json.dumps({
+                auth_response = c.post(UserTest.BASE_API_URL + '/auth', data=json.dumps({
                     'username': 'alexmtnezf',
                     'password': '1234'}), headers={'Content-Type': 'application/json'})
 
@@ -49,4 +49,15 @@ class UserTest(BaseTest):
         pass
 
     def test_user_cannot_login(self):
-        pass
+        with self.app_context():
+            with self.client() as c:
+                UserModel('Alex', 'alexmtnezf', '1234', is_admin=True).save_to_db()
+
+                # Registering the user, data is been sent as a form data
+                response = c.post(UserTest.BASE_API_URL + '/auth',
+                                  data=json.dumps({
+                                      'username': 'alexmtnezf',
+                                      'password': 'dasdads'}), headers={'Content-Type': 'application/json'})
+                self.assertEqual(401, response.status_code)
+                self.assertDictEqual({'message': 'Wrong credentials'},
+                                     json.loads(response.data.decode('utf-8')))

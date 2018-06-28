@@ -10,11 +10,13 @@ name = "pypi"
 pathlib = "*"
 flask = "*"
 flask-restful = "*"
-flask-jwt = "*"
 flask-sqlalchemy = "*"
 "psycopg2" = "*"
 twilio = "*"
 requests = "*"
+flasgger = "*"
+passlib = "*"
+flask-jwt-extended = "*"
 
 
 [dev-packages]

@@ -6,6 +6,10 @@ class BaseModel(object):
         return str(self.__dict__)
 
     @classmethod
+    def find_all(cls):
+        return cls.query.all()
+
+    @classmethod
     def find_by_name(cls, name):
         return cls.query.filter_by(name=name).first()
 

@@ -13,7 +13,7 @@ from db import db
 
 
 class BaseTest(TestCase):
-    # Class variable
+    # Class variables
     SQLALCHEMY_DATABASE_URI = "sqlite:///"
     BASE_API_URL = flaskApp.config['BASE_API_URL']
 

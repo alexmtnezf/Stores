@@ -15,7 +15,8 @@ class UserTest(UnitBaseTest):
         Test the __init__ method of UserModel
         :return:
         """
-        user = UserModel('Alexander', 'alexmtnezf', '12345')
+        user = UserModel('Alexander', 'alexmtnezf', '12345', is_admin=True)
         self.assertEqual('alexmtnezf', user.username)
-        self.assertEqual('12345', user.password)
+        assert UserModel.verify_hash('12345', user.password)
         self.assertEqual('Alexander', user.name)
+        self.assertTrue(user.is_admin)

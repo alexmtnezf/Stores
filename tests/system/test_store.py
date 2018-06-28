@@ -7,10 +7,30 @@ from tests.base_test import BaseTest
 
 
 class StoreTest(BaseTest):
+    USER_ID = None
+
+    def setUp(self):
+        super(StoreTest, self).setUp()
+        with self.app_context():
+            with self.client() as client:
+                # Register manually the user for login
+                UserModel('Alex', 'alexmtnezf', '1234', is_admin=True).save_to_db()
+                # Execute login request
+                auth_resp = client.post(StoreTest.BASE_API_URL + '/auth', data=json.dumps({
+                    'username': 'alexmtnezf',
+                    'password': '1234'}), headers={'Content-Type': 'application/json'})
+
+                data = auth_resp.data.decode('utf-8')  # Decode binary buffer before parsing it to JSON objects
+                data = json.loads(data)
+                jwt_token = data.get('access_token')
+                StoreTest.USER_ID = data.get('user_id')
+
+                self.headers = {'Authorization': 'Bearer {}'.format(jwt_token)}
+
     def test_create_empty_store(self):
         with self.app_context():
             with self.client() as cl:
-                resp = cl.post(StoreTest.BASE_API_URL + '/store/test')
+                resp = cl.post(StoreTest.BASE_API_URL + '/store/test', headers=self.headers)
                 self.assertEqual(201, resp.status_code)
                 self.assertDictEqual({'id': 1, 'name': 'test', 'items': []}, json.loads(resp.data.decode('utf-8')))
 
@@ -18,7 +38,7 @@ class StoreTest(BaseTest):
         with self.app_context():
             with self.client() as cl:
                 StoreModel('test').save_to_db()
-                resp = cl.post(StoreTest.BASE_API_URL + '/store/test')
+                resp = cl.post(StoreTest.BASE_API_URL + '/store/test', headers=self.headers)
                 self.assertEqual(400, resp.status_code)
                 self.assertDictEqual({'message': "A store with name 'test' already exists."},
                                      json.loads(resp.data.decode('utf-8')))
@@ -27,16 +47,17 @@ class StoreTest(BaseTest):
         with self.app_context():
             with self.client() as cl:
                 StoreModel('test').save_to_db()
-                resp = cl.delete(StoreTest.BASE_API_URL + '/store/test')
+                resp = cl.delete(StoreTest.BASE_API_URL + '/store/test', headers=self.headers)
                 self.assertEqual(200, resp.status_code)
                 self.assertDictEqual({'message': 'Store deleted'}, json.loads(resp.data.decode('utf-8')))
 
     def test_delete_store_not_found(self):
         with self.app_context():
             with self.client() as cl:
-                resp = cl.delete(StoreTest.BASE_API_URL + '/store/test')
-                self.assertEqual(404, resp.status_code)
-                self.assertDictEqual({'message': 'Store not deleted'}, json.loads(resp.data.decode('utf-8')))
+                resp = cl.delete(StoreTest.BASE_API_URL + '/store/test', headers=self.headers)
+                # The DELETE method es Idempotent, if the store not exists, it will return 200 status code anyways
+                self.assertEqual(200, resp.status_code)
+                # self.assertDictEqual({'message': "Store test doesn't exist"}, json.loads(resp.data.decode('utf-8')))
 
     def test_find_store(self):
         with self.app_context():
@@ -44,14 +65,8 @@ class StoreTest(BaseTest):
                 # Create a store
                 StoreModel('test').save_to_db()
                 # Register manually the user for login
-                UserModel('Alex', 'alexmtnezf', '1234').save_to_db()
-                # Execute login request
-                auth_resp = cl.post('/auth', data=json.dumps({
-                    'username': 'alexmtnezf',
-                    'password': '1234'}), headers={'Content-Type': 'application/json'})
 
-                jwt_token = json.loads(auth_resp.data.decode('utf-8')).get('access_token')
-                resp = cl.get(StoreTest.BASE_API_URL + '/store/test', headers={'Authorization': 'JWT ' + jwt_token})
+                resp = cl.get(StoreTest.BASE_API_URL + '/store/test', headers=self.headers)
                 self.assertEqual(200, resp.status_code)
                 self.assertEqual({'id': 1, 'name': 'test', 'items': []}, json.loads(resp.data.decode('utf-8')))
 
@@ -61,15 +76,8 @@ class StoreTest(BaseTest):
                 # Create a store and one item for the store
                 StoreModel('test').save_to_db()
                 ItemModel('Item1', 19.99, 1).save_to_db()
-                # Register manually the user for login
-                UserModel('Alex', 'alexmtnezf', '1234').save_to_db()
-                # Execute login request
-                auth_resp = cl.post('/auth', data=json.dumps({
-                    'username': 'alexmtnezf',
-                    'password': '1234'}), headers={'Content-Type': 'application/json'})
 
-                jwt_token = json.loads(auth_resp.data.decode('utf-8')).get('access_token')
-                resp = cl.get(StoreTest.BASE_API_URL + '/store/test', headers={'Authorization': 'JWT ' + jwt_token})
+                resp = cl.get(StoreTest.BASE_API_URL + '/store/test', headers=self.headers)
                 self.assertEqual(200, resp.status_code)
                 self.assertEqual({
                     'id': 1,
@@ -83,15 +91,7 @@ class StoreTest(BaseTest):
     def test_find_store_not_found(self):
         with self.app_context():
             with self.client() as cl:
-                # Register manually the user for login
-                UserModel('Alex', 'alexmtnezf', '1234').save_to_db()
-                # Execute login request
-                auth_resp = cl.post('/auth', data=json.dumps({
-                    'username': 'alexmtnezf',
-                    'password': '1234'}), headers={'Content-Type': 'application/json'})
-
-                jwt_token = json.loads(auth_resp.data.decode('utf-8')).get('access_token')
-                resp = cl.get(StoreTest.BASE_API_URL + '/store/test', headers={'Authorization': 'JWT ' + jwt_token})
+                resp = cl.get(StoreTest.BASE_API_URL + '/store/test', headers=self.headers)
                 self.assertEqual(404, resp.status_code)
 
     def test_store_without_login(self):
@@ -105,7 +105,7 @@ class StoreTest(BaseTest):
         with self.app_context():
             with self.client() as cl:
                 StoreModel('test').save_to_db()
-                resp = cl.get(StoreTest.BASE_API_URL + '/stores')
+                resp = cl.get(StoreTest.BASE_API_URL + '/stores', headers=self.headers)
                 self.assertEqual(200, resp.status_code)
                 self.assertDictEqual({
                     'stores': [
@@ -118,7 +118,7 @@ class StoreTest(BaseTest):
                 StoreModel('test').save_to_db()
                 ItemModel('Item1', 19.99, 1).save_to_db()
 
-                resp = cl.get(StoreTest.BASE_API_URL + '/stores')
+                resp = cl.get(StoreTest.BASE_API_URL + '/stores', headers=self.headers)
                 self.assertEqual(200, resp.status_code)
                 self.assertDictEqual({
                     'stores': [{

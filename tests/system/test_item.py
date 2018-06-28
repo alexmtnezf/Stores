@@ -13,9 +13,9 @@ class ItemTest(BaseTest):
         with self.app_context():
             with self.client() as client:
                 # Register manually the user for login
-                UserModel('Alex', 'alexmtnezf', '1234').save_to_db()
+                UserModel('Alex', 'alexmtnezf', '1234', is_admin=True).save_to_db()
                 # Execute login request
-                auth_resp = client.post('/auth', data=json.dumps({
+                auth_resp = client.post(ItemTest.BASE_API_URL + '/auth', data=json.dumps({
                     'username': 'alexmtnezf',
                     'password': '1234'}), headers={'Content-Type': 'application/json'})
 
@@ -24,14 +24,14 @@ class ItemTest(BaseTest):
                 jwt_token = data.get('access_token')
                 ItemTest.USER_ID = data.get('user_id')
 
-                self.headers = {'Authorization': 'JWT {}'.format(jwt_token)}
+                self.headers = {'Authorization': 'Bearer {}'.format(jwt_token)}
 
     def test_create_item(self):
         with self.app_context():
             with self.client() as cl:
                 StoreModel('Store1').save_to_db()
                 resp = cl.post(ItemTest.BASE_API_URL + '/item/test', data={
-                    'price': 40.2, 'store_id': 1, 'user_id': ItemTest.USER_ID})
+                    'price': 40.2, 'store_id': 1, 'user_id': ItemTest.USER_ID}, headers=self.headers)
                 self.assertEqual(201, resp.status_code)
                 self.assertDictEqual({'name': 'test', 'price': 40.2, 'store_id': 1},
                                      json.loads(resp.data.decode('utf-8')))
@@ -41,7 +41,8 @@ class ItemTest(BaseTest):
             with self.client() as cl:
                 StoreModel('Store1').save_to_db()
                 ItemModel(name='test', price=40.2, store_id=1).save_to_db()
-                resp = cl.post(ItemTest.BASE_API_URL + '/item/test', data={'price': 40.2, 'store_id': 1})
+                resp = cl.post(ItemTest.BASE_API_URL + '/item/test', data={'price': 40.2, 'store_id': 1},
+                               headers=self.headers)
                 self.assertEqual(400, resp.status_code)
                 self.assertDictEqual({'message': "An item with name 'test' already exists."},
                                      json.loads(resp.data.decode('utf-8')))
@@ -51,13 +52,13 @@ class ItemTest(BaseTest):
             with self.client() as cl:
                 StoreModel('Store1').save_to_db()
                 ItemModel(name='test', price=40.2, store_id=1).save_to_db()
-                resp = cl.delete(ItemTest.BASE_API_URL + '/item/test')
+                resp = cl.delete(ItemTest.BASE_API_URL + '/item/test', headers=self.headers)
                 self.assertEqual(200, resp.status_code)
 
     def test_delete_item_not_found(self):
         with self.app_context():
             with self.client() as cl:
-                resp = cl.delete(ItemTest.BASE_API_URL + '/item/test')
+                resp = cl.delete(ItemTest.BASE_API_URL + '/item/test', headers=self.headers)
                 self.assertEqual(200, resp.status_code)
                 self.assertDictEqual({'message': 'Item deleted'}, json.loads(resp.data.decode('utf-8')))
 
@@ -98,7 +99,7 @@ class ItemTest(BaseTest):
                 StoreModel('test').save_to_db()
 
                 resp = cl.put(ItemTest.BASE_API_URL + '/item/test',
-                              data={'price': 40.2, 'store_id': 1, 'user_id': ItemTest.USER_ID})
+                              data={'price': 40.2, 'store_id': 1, 'user_id': ItemTest.USER_ID}, headers=self.headers)
                 self.assertEqual(200, resp.status_code)
                 self.assertDictEqual({'name': 'test', 'price': 40.2, 'store_id': 1},
                                      json.loads(resp.data.decode('utf-8')))
@@ -113,7 +114,7 @@ class ItemTest(BaseTest):
                 self.assertEqual(40.2, ItemModel.find_by_name('test').price)
 
                 resp = cl.put(ItemTest.BASE_API_URL + '/item/test',
-                              data={'price': 30.2, 'store_id': 1, 'user_id': ItemTest.USER_ID})
+                              data={'price': 30.2, 'store_id': 1, 'user_id': ItemTest.USER_ID}, headers=self.headers)
                 self.assertEqual(200, resp.status_code)
                 self.assertEqual(30.2, ItemModel.find_by_name('test').price)
                 self.assertDictEqual({'name': 'test', 'price': 30.2, 'store_id': 1},
@@ -122,7 +123,7 @@ class ItemTest(BaseTest):
     def test_item_list_empty(self):
         with self.app_context():
             with self.client() as cl:
-                resp = cl.get(ItemTest.BASE_API_URL + '/items')
+                resp = cl.get(ItemTest.BASE_API_URL + '/items', headers=self.headers)
                 self.assertEqual(200, resp.status_code)
                 self.assertDictEqual({'items': []}, json.loads(resp.data.decode('utf-8')))
 
@@ -132,7 +133,7 @@ class ItemTest(BaseTest):
                 # Create a store and item for the store
                 StoreModel('test').save_to_db()
                 ItemModel('test', 40.2, 1).save_to_db()
-                resp = cl.get(ItemTest.BASE_API_URL + '/items')
+                resp = cl.get(ItemTest.BASE_API_URL + '/items', headers=self.headers)
                 self.assertEqual(200, resp.status_code)
                 self.assertDictEqual({'items': [
                     {'name': 'test', 'price': 40.2, 'store_id': 1}

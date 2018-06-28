@@ -17,7 +17,7 @@ class UserTest(BaseTest):
         :return: None
         """
         with self.app_context():
-            user = UserModel('Alex', 'alexmtnezf', '12345')
+            user = UserModel('Alex', 'alexmtnezf', '12345', is_admin=True)
             self.assertIsNone(UserModel.find_by_name('Alex'))
             self.assertIsNone(UserModel.find_by_username('alexmtnezf'))
             self.assertIsNone(UserModel.find_by_id(1))
