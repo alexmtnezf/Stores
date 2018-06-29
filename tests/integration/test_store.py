@@ -4,8 +4,8 @@ Class tested: StoreModel
 
 Only test methods that depends on databases or work with other classes and methods of your app
 """
-
-from models.item import ItemModel, NonExistentItemModelError
+from exceptions import ItemNotFoundError
+from models.item import ItemModel
 from models.store import StoreModel
 from tests.base_test import BaseTest
 
@@ -124,5 +124,5 @@ class StoreTest(BaseTest):
             item = ItemModel('Item1', 19.99, 1).save_to_db() # This item has id = 1
             self.assertEqual(1, item.id)
 
-            self.assertRaises(NonExistentItemModelError,
-                                  store.delete_item, 2) # Deleting an item with id = 2, raises NonExistentItemModelError
+            self.assertRaises(ItemNotFoundError,
+                              store.delete_item, 2) # Deleting an item with id = 2, raises NonExistentItemModelError
