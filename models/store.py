@@ -5,7 +5,7 @@ Module that contains the model definition for stores in a SQLAlchemy database.
 """
 
 from db import db
-from exceptions import ItemNotFoundError
+from exception import ItemNotFoundError
 from models.base_model import BaseModel
 from models.item import ItemModel
 

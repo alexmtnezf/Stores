@@ -4,7 +4,7 @@ from flask_jwt_extended import decode_token
 from sqlalchemy.orm.exc import NoResultFound
 
 from db import db
-from exceptions import TokenNotFound
+from exception import TokenNotFound
 from models.token import TokenModel
 
 

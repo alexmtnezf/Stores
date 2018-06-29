@@ -4,7 +4,7 @@ Class tested: StoreModel
 
 Only test methods that depends on databases or work with other classes and methods of your app
 """
-from exceptions import ItemNotFoundError
+from exception import ItemNotFoundError
 from models.item import ItemModel
 from models.store import StoreModel
 from tests.base_test import BaseTest
