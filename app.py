@@ -235,7 +235,7 @@ def invalid_token_callback(error):
 @jwt.unauthorized_loader
 def missing_token_callback(error):
     return jsonify({
-        'description': 'Request does not contain an access token',
+        'description': 'Missing JWT in cookies or headers',
         'error': 'authorization_required'
     }), 401
 

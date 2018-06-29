@@ -8,7 +8,6 @@ from flask_restful import Resource, reqparse
 from twilio.base.exceptions import TwilioRestException
 
 from models.item import ItemModel
-from models.user import UserModel
 from utils import notifications
 
 
@@ -24,6 +23,10 @@ class ItemResource(Resource):
                         required=True,
                         help="Every item needs a store!")
 
+    parser.add_argument('user_id',
+                        type=int,
+                        required=True,
+                        help="User id is required!")
     @jwt_required
     def get(self, name):
         item = ItemModel.find_by_name(name)
@@ -33,17 +36,39 @@ class ItemResource(Resource):
 
     @jwt_required
     def post(self, name):
+        """Creates a new Item
+        This is an example
+        ---
+        tags:
+          - Items
+        parameters:
+          - in: body
+            name: body
+            schema:
+              properties:
+                store_id:
+                  type: integer
+                  required: true
+                price:
+                  type: decimal
+                  required: true
+          - in: path
+            name: name
+            required: true
+            description: The name of the item!
+            type: string
+        responses:
+          201:
+            description: Item created
+            schema:
+              $ref: '#/definitions/Item'
+          401:
+            description: Authorization required
+        """
         if ItemModel.find_by_name(name):
             return {'message': "An item with name '{}' already exists.".format(name)}, 400
 
-        ItemResource.parser.add_argument('user_id',
-                        type=int,
-                        required=True,
-                        help="User id is required!")
-
         data = ItemResource.parser.parse_args()
-
-
         item = ItemModel(name, **data)
 
         try:
@@ -51,10 +76,10 @@ class ItemResource(Resource):
         except:
             return {"message": "An error occurred inserting the item."}, 500
 
-        current_user = UserModel.find_by_id(data['user_id'])
+        current_user = get_jwt_identity()
         try:
             notifications.NotificationDispatcher.send_sms(
-                from_name=current_user.username,
+                from_name=current_user,
                 to_phone='+12106105564',
                 to_name='Alex',
                 text='New Item with name {} and price {} was added.'.format(item.name, item.price))
@@ -97,7 +122,7 @@ class ItemResource(Resource):
 
     @jwt_required
     def put(self, name):
-        """
+        """Endpoint to create/update an item for the store
         This is an example
         ---
         tags:
@@ -118,25 +143,26 @@ class ItemResource(Resource):
             schema:
               $ref: '#/definitions/Item'
           200:
-            description: The task has been updated
+            description: Item updated
             schema:
               $ref: '#/definitions/Item'
         """
         data = ItemResource.parser.parse_args()
-
         item = ItemModel.find_by_name(name)
 
         if item is None:
             item = ItemModel(name, **data)
+            flag_create = True
         else:
             item.price = data['price']
+            flag_create = False
 
         try:
             item.save_to_db()
         except:
             return {"message": "An error occurred inserting the item."}, 500
 
-        return item.json()
+        return item.json(), 201 if flag_create else item.json()
 
 
 class ItemListResource(Resource):

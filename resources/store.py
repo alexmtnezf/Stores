@@ -182,6 +182,6 @@ class StoreListResource(Resource):
             return {'stores': stores}
 
         return {
-            'stores': list(map(lambda x: x.name, stores)),
+            'stores': list(map(lambda x: x['name'], stores)),
             'message': 'More data available if logged in'
         }

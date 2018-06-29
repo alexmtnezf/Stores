@@ -124,7 +124,7 @@ class TodoList(Resource):
         This is an example
         ---
         tags:
-          - restful
+          - To-Do list
         definitions:
           Task:
             task:
