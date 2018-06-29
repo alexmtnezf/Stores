@@ -213,6 +213,48 @@ def check_if_token_in_blacklist(decrypted_token):
     return is_token_revoked(decrypted_token)
 
 
+# Whe the user submit an expired JWT token this decorator will be called
+@jwt.expired_token_loader
+def expired_token_callback():
+    return jsonify({
+        'description': 'Token has expired',
+        'error': 'expired_token'
+    }), 401
+
+
+# Decorator called when the client app doesn't send a valid JWT
+@jwt.invalid_token_loader
+def invalid_token_callback(error):
+    return jsonify({
+        'description': 'Signature verification failed.',
+        'error': 'invalid_token'
+    }), 401
+
+
+# Decorator called when a client app didn't send a JWT in a protected endpoint
+@jwt.unauthorized_loader
+def missing_token_callback(error):
+    return jsonify({
+        'description': 'Request does not contain an access token',
+        'error': 'authorization_required'
+    }), 401
+
+
+@jwt.needs_fresh_token_loader
+def token_not_fresh_callback(error):
+    return jsonify({
+        'description': 'Fresh token required, this token is not fresh',
+        'error': 'fresh_token_required'
+    }), 401
+
+
+@jwt.revoked_token_loader
+def revoked_token_callback(error):
+    return jsonify({
+        'error': 'token_revoked',
+        'description': 'The token sent is revoked. That means probably the user has logged out.'
+    }), 401
+
 # Swagger specification for Api Help
 swagger_config = {
     "headers": [
@@ -315,13 +357,13 @@ swagger = Swagger(flaskApp, template=swagger_template)
 # Building our Restful Api
 api = Api(flaskApp)
 
-# Adding Restful Api resources
+# Adding Item and Store restful resources
 api.add_resource(ItemResource, flaskApp.config['BASE_API_URL'] + '/item/<string:name>')
 api.add_resource(StoreResource, flaskApp.config['BASE_API_URL'] + '/store/<string:name>')
 api.add_resource(ItemListResource, flaskApp.config['BASE_API_URL'] + '/items')
 api.add_resource(StoreListResource, flaskApp.config['BASE_API_URL'] + '/stores')
 
-# Adding User Restful Api endpoints
+# Adding User restful api resources
 api.add_resource(UserRegister, flaskApp.config['BASE_API_URL'] + '/register')
 api.add_resource(AllUsers, flaskApp.config['BASE_API_URL'] + '/users')
 api.add_resource(UserResource, flaskApp.config['BASE_API_URL'] + '/user/<string:username>')
@@ -331,6 +373,10 @@ api.add_resource(UserLogoutRefresh, flaskApp.config['BASE_API_URL'] + '/logout/r
 
 api.add_resource(TokenRefresh, '/token/refresh')
 api.add_resource(TokenList, flaskApp.config['BASE_API_URL'] + '/token')
+# To-Do api restful resources
+api.add_resource(TodoList, '/todos')
+api.add_resource(Todo, '/todos/<todo_id>')
+
 
 @flaskApp.route('/')
 def index():
@@ -552,8 +598,6 @@ def delete_cookies():
 #     return jsonify({"message": "We could not authorize. Did you include the valid authorization header?"}), 401
 
 
-api.add_resource(TodoList, '/todos')
-api.add_resource(Todo, '/todos/<todo_id>')
 
 if __name__ == "__main__":
     from db import db
