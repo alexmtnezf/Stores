@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-from twilio.rest import Client
+import os
+import sys
 
-from environ import Env
-# sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from twilio.rest import Client
-
 from environ import Env
 
 

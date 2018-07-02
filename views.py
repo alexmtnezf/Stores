@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from flask import jsonify, request, url_for
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt_claims
 from werkzeug.utils import redirect
 
 from app import flaskApp
+from utils.helpers import secure_cookie
 
 
 @flaskApp.route('/')
