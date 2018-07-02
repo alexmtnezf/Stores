@@ -9,7 +9,6 @@ This module provides the flaskApp object for running the Flask application
 import argparse
 import logging
 import os
-from logging.config import dictConfig
 from pathlib import Path
 
 from flasgger import Swagger
@@ -43,56 +42,59 @@ if env_file.exists():
 env = environ.Env()
 
 # Log everything to the logs directory at the top
-LOGFILE_ROOT = BASE_DIR / 'logs'
-LOGGING = {
-    'version': 1,
-    'formatters': {
-        'default': {
-            'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
-        },
-        'verbose': {
-            'format':
-                "[%(asctime)s] %(levelname)s [%(pathname)s:%(lineno)s] %(message)s",
-            'datefmt':
-                "%d/%b/%Y %H:%M:%S"
-        },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
-        },
-    },
-    'handlers': {
-        'wsgi': {
-            'class': 'logging.StreamHandler',
-            'stream': 'ext://flask.logging.wsgi_errors_stream',
-            'formatter': 'default'
-        },
-        'flask_log_file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': str(LOGFILE_ROOT / 'flask.log'),
-            'formatter': 'verbose'
-        },
-        'proj_log_file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': str(LOGFILE_ROOT / 'project.log'),
-            'formatter': 'verbose'
-        },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple'
-        }
-    },
-    'root': {
-        'level':
-            'INFO',
-        'handlers': ['wsgi'] if env('FLASK_DEBUG', default=False) == True else
-        ['console', 'flask_log_file', 'proj_log_file']
-    }
-}
-
-dictConfig(LOGGING)
+# LOGFILE_ROOT = BASE_DIR / 'logs'
+# LOGGING = {
+#     'version': 1,
+#     'formatters': {
+#         'default': {
+#             'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+#         },
+#         'verbose': {
+#             'format':
+#                 "[%(asctime)s] %(levelname)s [%(pathname)s:%(lineno)s] %(message)s",
+#             'datefmt':
+#                 "%d/%b/%Y %H:%M:%S"
+#         },
+#         'simple': {
+#             'format': '%(levelname)s %(message)s'
+#         },
+#     },
+#     'handlers': {
+#         'wsgi': {
+#             'class': 'logging.StreamHandler',
+#             'stream': 'ext://flask.logging.wsgi_errors_stream',
+#             'formatter': 'default'
+#         },
+#         'flask_log_handler': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             'stream': 'ext://flask.logging.wsgi_errors_stream',
+#             'filename': str(LOGFILE_ROOT / 'flask.log'),
+#             'formatter': 'verbose'
+#         },
+#         'proj_log_handler': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             'filename': str(LOGFILE_ROOT / 'project.log'),
+#             'formatter': 'verbose'
+#         },
+#         'email_handler': {
+#
+#         },
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'simple'
+#         }
+#     },
+#     'root': {
+#         'level': 'INFO',
+#         'handlers': ['wsgi'] if env('FLASK_DEBUG', default=True) is True else
+#         ['flask_log_file', 'proj_log_file', 'email_handler']
+#     }
+# }
+#
+# dictConfig(LOGGING)
 
 if not env('FLASK_DEBUG', default=True):
     from logging.handlers import SMTPHandler
@@ -166,10 +168,10 @@ def set_cors_headers(response):
     return response
 
 
-flaskApp.config['DEBUG'] = bool(env('FLASK_DEBUG', default=False))
+flaskApp.config['DEBUG'] = bool(env('FLASK_DEBUG', default=True))
 flaskApp.config['ENV'] = env(
     'FLASK_ENV',
-    default='production')  # same as: os.environ['FLASK_ENV'] = True
+    default='development')  # same as: os.environ['FLASK_ENV'] = True
 
 if flaskApp.config['ENV'] == 'development':
     default_db_uri = env('DATABASE_URL', default='sqlite:///data.db')
@@ -181,7 +183,7 @@ flaskApp.config['SQLALCHEMY_DATABASE_URI'] = default_db_uri
 flaskApp.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 flaskApp.config['PROPAGATE_EXCEPTIONS'] = True
 flaskApp.config['SQLALCHEMY_ECHO'] = True if bool(
-    env('FLASK_DEBUG', default=False)) is True else False
+    env('FLASK_DEBUG', default=True)) is True else False
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Raises ImproperlyConfigured exception if SECRET_KEY not in os.environ
@@ -201,7 +203,7 @@ flaskApp.config['JWT_TOKEN_LOCATION'] = ['cookies', 'headers']
 # Only allow JWT cookies to be sent over https. In production, this
 # should likely be True
 flaskApp.config['JWT_COOKIE_SECURE'] = False if env(
-    'FLASK_ENV', default='production') == 'development' else True
+    'FLASK_ENV', default='development') == 'development' else True
 
 # Set the cookie paths, so that you are only sending your access token
 # cookie to the access endpoints, and only sending your refresh token

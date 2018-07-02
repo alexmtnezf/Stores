@@ -7,7 +7,7 @@ from db import db
 #bind = "0.0.0.0:{}".format(port)
 workers = multiprocessing.cpu_count() * 2 + 1
 
-# End
+# End Gunicorn settings
 
 # Flask app configuration
 db.init_app(application)
@@ -16,3 +16,4 @@ db.init_app(application)
 @application.before_first_request
 def create_tables():
     db.create_all()
+
