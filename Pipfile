@@ -19,6 +19,7 @@ passlib = "*"
 flask-jwt-extended = "*"
 gunicorn = "*"
 
+
 [dev-packages]
 
 pytest = "*"
