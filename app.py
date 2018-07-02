@@ -7,7 +7,6 @@ This module provides the flaskApp object for running the Flask application
 
 # Use 12factor inspired environment variables or from a file
 import argparse
-import logging
 import os
 from pathlib import Path
 
@@ -96,18 +95,18 @@ env = environ.Env()
 #
 # dictConfig(LOGGING)
 
-if not env('FLASK_DEBUG', default=True):
-    from logging.handlers import SMTPHandler
-
-    mail_handler = SMTPHandler(
-        mailhost='smtp.google.com',
-        fromaddr='alexmtnezf@gmail.com',
-        toaddrs=['alexmtnezf@gmail.com'],
-        subject='Application Error')
-    mail_handler.setLevel(logging.ERROR)
-    mail_handler.setFormatter(
-        logging.Formatter(
-            '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
+# if not env('FLASK_DEBUG', default=True):
+#     from logging.handlers import SMTPHandler
+#
+#     mail_handler = SMTPHandler(
+#         mailhost='smtp.google.com',
+#         fromaddr='alexmtnezf@gmail.com',
+#         toaddrs=['alexmtnezf@gmail.com'],
+#         subject='Application Error')
+#     mail_handler.setLevel(logging.ERROR)
+#     mail_handler.setFormatter(
+#         logging.Formatter(
+#             '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
 
 # Prevent WSGI from correcting the casing of the Location header
 BaseResponse.autocorrect_location_header = False
