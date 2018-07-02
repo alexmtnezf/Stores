@@ -1,3 +1,2 @@
 #!/usr/bin/env bash
-pipenv install gunicorn
-pipenv shell
+gunicorn --check-config run

@@ -11,13 +11,13 @@ pathlib = "*"
 flask = "*"
 flask-restful = "*"
 flask-sqlalchemy = "*"
-"psycopg2" = "*"
+"psycopg2-binary" = "*"
 twilio = "*"
 requests = "*"
 flasgger = "*"
 passlib = "*"
 flask-jwt-extended = "*"
-
+gunicorn = "*"
 
 [dev-packages]
 
