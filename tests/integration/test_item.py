@@ -41,7 +41,3 @@ class ItemTest(BaseTest):
             item = ItemModel('item1', 19.99, 1)
             item.save_to_db()
             self.assertEqual('store', item.store.name)
-            # Testing that ForeignKey constraint raises an IntegrityError exception when try to relation an item
-            # with a non-existent Store.
-            with self.assertRaises(Exception):
-                ItemModel('item2', 99.32, 2).save_to_db()
