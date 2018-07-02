@@ -8,13 +8,13 @@ and makes sure that it is a new, blank database each time.
 
 from unittest import TestCase
 
-from app import flaskApp
+from app import flaskApp, default_db_uri
 from db import db
 
 
 class BaseTest(TestCase):
     # Class variables
-    SQLALCHEMY_DATABASE_URI = "postgresql://test:test@localhost:5432/store"  # "sqlite:///"
+    SQLALCHEMY_DATABASE_URI = default_db_uri  #
     BASE_API_URL = flaskApp.config['BASE_API_URL']
 
     @classmethod
