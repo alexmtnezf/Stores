@@ -17,13 +17,13 @@ requests = "*"
 flasgger = "*"
 passlib = "*"
 flask-jwt-extended = "*"
-pylint = "*"
-yapf = "*"
 
 
 [dev-packages]
 
 pytest = "*"
+pylint = "*"
+yapf = "*"
 
 
 [requires]

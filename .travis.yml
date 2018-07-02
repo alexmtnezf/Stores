@@ -12,7 +12,8 @@ python:
 install:
   - "pip install --upgrade pip"
   - "pip install pipenv"
-  - "pip install pytest"
+  - "pipenv install pytest"
+  - "pipenv install psycopg2-binary"
   - "pipenv install"
 # command to run tests
 script: python -m pytest tests
