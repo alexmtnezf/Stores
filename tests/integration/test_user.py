@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 StoreTest
 Class tested: StoreModel

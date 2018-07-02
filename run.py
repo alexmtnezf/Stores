@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import multiprocessing
 
 from app import flaskApp as application

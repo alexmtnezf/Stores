@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from passlib.hash import pbkdf2_sha256 as sha256
 
 from db import db

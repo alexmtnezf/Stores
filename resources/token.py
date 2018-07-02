@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import jsonify, current_app, request
 from flask_jwt_extended import (jwt_required, create_access_token, get_current_user, set_access_cookies, \
                                 jwt_refresh_token_required, get_jwt_identity, get_csrf_token, get_jwt_claims,

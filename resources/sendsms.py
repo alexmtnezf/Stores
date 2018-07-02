@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask_restful import Resource
 
 from utils.notifications import NotificationDispatcher
