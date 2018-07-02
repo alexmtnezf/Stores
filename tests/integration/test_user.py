@@ -10,7 +10,6 @@ from tests.base_test import BaseTest
 
 
 class UserTest(BaseTest):
-
     def test_crud(self):
         """
         Tests the delete_from_db and save_to_db methods of UserModel

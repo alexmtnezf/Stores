@@ -1,13 +1,13 @@
-import os
-import sys
-import re
 import logging
+import os
+import re
+import sys
 import urllib
 import warnings
+
 from six import string_types
 
 logger = logging.getLogger(__name__)
-
 
 VERSION = '0.1.1'
 __author__ = 'alexmtnezf'
@@ -18,15 +18,14 @@ __version__ = tuple(VERSION.split('.'))
 def _cast_int(v):
     return int(v) if hasattr(v, 'isdigit') and v.isdigit() else v
 
+
 def _cast_urlstr(v):
     return urllib.parse.unquote_plus(v) if isinstance(v, str) else v
 
 
 class NoValue(object):
-
     def __repr__(self):
         return '<{0}>'.format(self.__class__.__name__)
-
 
 
 class Env(object):
@@ -40,7 +39,8 @@ class Env(object):
         self.scheme = scheme
 
     def __call__(self, var, cast=None, default=NOTSET, parse_default=False):
-        return self.get_value(var, cast=cast, default=default, parse_default=parse_default)
+        return self.get_value(
+            var, cast=cast, default=default, parse_default=parse_default)
 
     def __contains__(self, var):
         return var in self.ENVIRON
@@ -57,8 +57,7 @@ class Env(object):
         """
 
         logger.debug("get '{0}' casted as '{1}' with default '{2}'".format(
-            var, cast, default
-        ))
+            var, cast, default))
 
         if var in self.scheme:
             var_info = self.scheme[var]
@@ -101,7 +100,6 @@ class Env(object):
         return value
 
     # Class and static methods
-
 
     @classmethod
     def parse_value(cls, value, cast):
@@ -169,7 +167,8 @@ class Env(object):
         """
         if env_file is None:
             frame = sys._getframe()
-            env_file = os.path.join(os.path.dirname(frame.f_back.f_code.co_filename), '.env')
+            env_file = os.path.join(
+                os.path.dirname(frame.f_back.f_code.co_filename), '.env')
             if not os.path.exists(env_file):
                 warnings.warn(
                     "%s doesn't exist - if you're not configuring your "
@@ -177,12 +176,12 @@ class Env(object):
                 return
 
         try:
-            with open(env_file) if isinstance(env_file, string_types) else env_file as f:
+            with open(env_file) if isinstance(env_file,
+                                              string_types) else env_file as f:
                 content = f.read()
         except IOError:
-            warnings.warn(
-                "Error reading %s - if you're not configuring your "
-                "environment separately, check this." % env_file)
+            warnings.warn("Error reading %s - if you're not configuring your "
+                          "environment separately, check this." % env_file)
             return
 
         logger.debug('Read environment variables from: {0}'.format(env_file))

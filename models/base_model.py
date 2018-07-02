@@ -1,3 +1,6 @@
+from flask import current_app
+from sqlalchemy.exc import IntegrityError
+
 from db import db
 
 
@@ -21,8 +24,14 @@ class BaseModel(object):
         raise NotImplementedError()
 
     def save_to_db(self):
-        db.session.add(self)
-        db.session.commit()
+        try:
+            db.session.add(self)
+            db.session.commit()
+        except IntegrityError as ex:
+            current_app.logger.error('\nDatabase error: {0} \n'.format(ex))
+            raise Exception(
+                'The related object to the one you are inserting is doesn\'t exist'
+            )
         return self
 
     def delete_from_db(self):

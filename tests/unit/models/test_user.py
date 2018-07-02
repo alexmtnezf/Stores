@@ -9,7 +9,6 @@ from tests.unit.unit_base_test import UnitBaseTest
 
 
 class UserTest(UnitBaseTest):
-
     def test_create_user(self):
         """
         Test the __init__ method of UserModel

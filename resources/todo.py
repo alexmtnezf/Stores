@@ -2,10 +2,18 @@ from flask import jsonify
 from flask_restful import Resource, reqparse, abort
 
 TODOS = {
-    'todo1': {'task': 'build an API'},
-    'todo2': {'task': '?????'},
-    'todo3': {'task': 'profit!'},
-    '42': {'task': 'Use Flasgger'}
+    'todo1': {
+        'task': 'build an API'
+    },
+    'todo2': {
+        'task': '?????'
+    },
+    'todo3': {
+        'task': 'profit!'
+    },
+    '42': {
+        'task': 'Use Flasgger'
+    }
 }
 
 

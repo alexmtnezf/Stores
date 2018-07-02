@@ -6,9 +6,10 @@ Allows the user to register, login,
 from flasgger import swag_from
 from flask import current_app
 from flask import request, jsonify
-from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, get_jwt_claims,
-                                jwt_refresh_token_required, get_jwt_identity, get_raw_jwt, jwt_optional, get_csrf_token,
-                                set_access_cookies, set_refresh_cookies, unset_jwt_cookies)
+from flask_jwt_extended import (
+    create_access_token, create_refresh_token, jwt_required, get_jwt_claims,
+    jwt_refresh_token_required, get_jwt_identity, get_raw_jwt, jwt_optional,
+    get_csrf_token, set_access_cookies, set_refresh_cookies, unset_jwt_cookies)
 from flask_restful import Resource, reqparse, abort
 
 from exception import TokenNotFound
@@ -24,7 +25,9 @@ class UserResource(Resource):
     def _get_or_404(self, username):
         store = UserModel.find_by_username(username)
         if store is None:
-            abort(404, message='User with username {} not found'.format(username))
+            abort(
+                404,
+                message='User with username {} not found'.format(username))
         else:
             return store
 
@@ -75,6 +78,7 @@ class UserResource(Resource):
     #         return {'message': 'User with id {} not found'}, 404
     #     return user.json()
 
+
 class UserRegister(Resource):
     """
     This resources allows users to register (sign up) in a POST request
@@ -82,10 +86,29 @@ class UserRegister(Resource):
 
     # Class variable for parsing the request arguments (no matter the HTTP method, such as POST, GET, PUT)
     parser = reqparse.RequestParser()
-    parser.add_argument('name', type=str, nullable=False, required=True, help='This name cannot be blank')
-    parser.add_argument('username', type=str, nullable=False, required=True, help='This username cannot be blank')
-    parser.add_argument('password', type=str, nullable=False, required=True, help="This password cannot be blank.")
-    parser.add_argument('is_admin', type=bool, nullable=False, help="This user is/is not admin?.")
+    parser.add_argument(
+        'name',
+        type=str,
+        nullable=False,
+        required=True,
+        help='This name cannot be blank')
+    parser.add_argument(
+        'username',
+        type=str,
+        nullable=False,
+        required=True,
+        help='This username cannot be blank')
+    parser.add_argument(
+        'password',
+        type=str,
+        nullable=False,
+        required=True,
+        help="This password cannot be blank.")
+    parser.add_argument(
+        'is_admin',
+        type=bool,
+        nullable=False,
+        help="This user is/is not admin?.")
 
     # parser.add_argument('roles', type=list, required=True, nullable=False, help="This ?.")
 
@@ -101,7 +124,6 @@ class UserRegister(Resource):
         except:
             return {"message": "An error occurred creating the user."}, 500
 
-
         return {"message": "User created successfully."}, 201
 
 
@@ -111,8 +133,18 @@ class UserLogin(Resource):
     """
     # Class variable for parsing the request arguments (no matter the HTTP method, such as POST, GET, PUT)
     parser = reqparse.RequestParser()
-    parser.add_argument('username', type=str, nullable=False, required=False, help='This username cannot be blank')
-    parser.add_argument('password', type=str, nullable=False, required=False, help="This password cannot be blank.")
+    parser.add_argument(
+        'username',
+        type=str,
+        nullable=False,
+        required=False,
+        help='This username cannot be blank')
+    parser.add_argument(
+        'password',
+        type=str,
+        nullable=False,
+        required=False,
+        help="This password cannot be blank.")
 
     def post(self):
         """This endpoint allows a user to login with the right credentials
@@ -173,18 +205,22 @@ class UserLogin(Resource):
         data = UserLogin.parser.parse_args()
         current_user = UserModel.find_by_username(data['username'])
 
-        if current_user and UserModel.verify_hash(data['password'], current_user.password):
+        if current_user and UserModel.verify_hash(data['password'],
+                                                  current_user.password):
 
             # create_access_token supports an optional 'fresh' argument,
             # which marks the token as fresh or non-fresh accordingly.
             # As we just verified their username and password, we are
             # going to mark the token as fresh here.
-            access_token = create_access_token(identity=current_user, fresh=True)
+            access_token = create_access_token(
+                identity=current_user, fresh=True)
             refresh_token = create_refresh_token(identity=current_user)
 
             # Store the tokens in our store with a status of not currently revoked.
-            add_token_to_database(access_token, current_app.config['JWT_IDENTITY_CLAIM'])
-            add_token_to_database(refresh_token, current_app.config['JWT_IDENTITY_CLAIM'])
+            add_token_to_database(access_token,
+                                  current_app.config['JWT_IDENTITY_CLAIM'])
+            add_token_to_database(refresh_token,
+                                  current_app.config['JWT_IDENTITY_CLAIM'])
 
             raw_response = {
                 'message': 'Logged in as {}'.format(current_user.username),
@@ -205,8 +241,10 @@ class UserLogin(Resource):
                     # Return the double submit values in the resulting JSON
                     # instead of in additional cookies
                     raw_response.update({
-                        'access_csrf': get_csrf_token(access_token),
-                        'refresh_csrf': get_csrf_token(refresh_token)
+                        'access_csrf':
+                            get_csrf_token(access_token),
+                        'refresh_csrf':
+                            get_csrf_token(refresh_token)
                     })
 
             # Creating the response
@@ -217,7 +255,6 @@ class UserLogin(Resource):
                 # We need to call these functions to set the JWTs in the httpOnly cookies, sent through our response object
                 set_access_cookies(response, access_token)
                 set_refresh_cookies(response, refresh_token)
-
 
         else:
             response = jsonify({'message': 'Wrong credentials'})
@@ -319,7 +356,10 @@ class UserLogoutAccess(Resource):
             resp = jsonify({'message': 'The specified token was not found'})
             resp.status_code = 404
         else:
-            resp = jsonify({'message': 'Successfully logged out', 'logout': True})
+            resp = jsonify({
+                'message': 'Successfully logged out',
+                'logout': True
+            })
             resp.status_code = 200
             unset_jwt_cookies(resp)
 
@@ -349,7 +389,10 @@ class UserLogoutRefresh(Resource):
             resp = jsonify({'message': 'The specified token was not found'})
             resp.status_code = 404
         else:
-            resp = jsonify({'message': 'Successfully logged out', 'logout': True})
+            resp = jsonify({
+                'message': 'Successfully logged out',
+                'logout': True
+            })
             resp.status_code = 200
             unset_jwt_cookies(resp)
 

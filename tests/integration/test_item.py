@@ -11,7 +11,6 @@ from tests.base_test import BaseTest
 
 
 class ItemTest(BaseTest):
-
     def test_crud(self):
         """
         Tests the delete_from_db and save_to_db methods of StoreModel
@@ -25,6 +24,9 @@ class ItemTest(BaseTest):
             self.assertIsNone(ItemModel.find_by_name('test'))
             item.save_to_db()
             self.assertIsNotNone(ItemModel.find_by_name('test'))
+            item.name = 'Item2'
+            item.save_to_db()
+            self.assertIsNotNone(ItemModel.find_by_name('Item2'))
             item.delete_from_db()
             self.assertIsNone(ItemModel.find_by_name('test'))
 
@@ -39,3 +41,7 @@ class ItemTest(BaseTest):
             item = ItemModel('item1', 19.99, 1)
             item.save_to_db()
             self.assertEqual('store', item.store.name)
+            # Testing that ForeignKey constraint raises an IntegrityError exception when try to relation an item
+            # with a non-existent Store.
+            with self.assertRaises(Exception):
+                ItemModel('item2', 99.32, 2).save_to_db()

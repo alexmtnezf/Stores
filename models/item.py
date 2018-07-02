@@ -6,6 +6,7 @@ Module that contains the model definition for items in a SQLAlchemy database.
 from db import db
 from .base_model import BaseModel
 
+
 class ItemModel(db.Model, BaseModel):
     """
     ItemModel class

@@ -11,18 +11,13 @@ from tests.base_test import BaseTest
 
 
 class StoreTest(BaseTest):
-
     def test_create_store_empty(self):
         """
         Tests if the items of the store are empty, when the store is just instantiated
         :return: None
         """
         store = StoreModel('store1')
-        expected = {
-            "id": None,
-            "name": "store1",
-            "items": []
-        }
+        expected = {"id": None, "name": "store1", "items": []}
 
         self.assertEqual(store.json(), expected)
         self.assertListEqual([], store.items.all())
@@ -85,11 +80,7 @@ class StoreTest(BaseTest):
         with self.app_context():
             store = StoreModel(name='test')
             store.save_to_db()
-            expected = {
-                'id': 1,
-                'name': 'test',
-                'items': []
-            }
+            expected = {'id': 1, 'name': 'test', 'items': []}
 
             self.assertDictEqual(expected, store.json())
 
@@ -121,8 +112,10 @@ class StoreTest(BaseTest):
         with self.app_context():
             store = StoreModel(name='test')
             store.save_to_db()
-            item = ItemModel('Item1', 19.99, 1).save_to_db() # This item has id = 1
+            item = ItemModel('Item1', 19.99,
+                             1).save_to_db()  # This item has id = 1
             self.assertEqual(1, item.id)
 
-            self.assertRaises(ItemNotFoundError,
-                              store.delete_item, 2) # Deleting an item with id = 2, raises NonExistentItemModelError
+            self.assertRaises(
+                ItemNotFoundError, store.delete_item,
+                2)  # Deleting an item with id = 2, raises ItemNotFoundError

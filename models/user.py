@@ -10,24 +10,23 @@ class UserModel(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True)
     username = db.Column(db.String(80))
-    password = db.Column(db.String(80))  # OJO: no podemos dejar de ponerle maxlength en SQLite a los campos de tabla
+    password = db.Column(
+        db.String(256)
+    )  # OJO: no podemos dejar de ponerle maxlength en SQLite a los campos de tabla
     is_admin = db.Column(db.Boolean())
 
     def __init__(self, name, username, password, is_admin):
         self.username = username
         self.name = name
-        self.password = UserModel.generate_hash(password)  # Encrypt password before save it
+        self.password = UserModel.generate_hash(
+            password)  # Encrypt password before save it
         self.is_admin = is_admin
 
     def __str__(self):
         return "User(id='%s')" % self.id
 
     def json(self):
-        return {
-            'id': self.id,
-            'username': self.username,
-            'name': self.name
-        }
+        return {'id': self.id, 'username': self.username, 'name': self.name}
 
     # Class methods
     @classmethod

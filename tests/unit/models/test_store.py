@@ -9,7 +9,6 @@ from tests.unit.unit_base_test import UnitBaseTest
 
 
 class StoreTest(UnitBaseTest):
-
     def test_create_store(self):
         """
         Test the __init__ method of StoreModel

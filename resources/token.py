@@ -1,6 +1,7 @@
 from flask import jsonify, current_app, request
-from flask_jwt_extended import jwt_required, create_access_token, get_current_user, set_access_cookies, \
-    jwt_refresh_token_required, get_jwt_identity, get_csrf_token, get_jwt_claims, fresh_jwt_required
+from flask_jwt_extended import (jwt_required, create_access_token, get_current_user, set_access_cookies, \
+                                jwt_refresh_token_required, get_jwt_identity, get_csrf_token, get_jwt_claims,
+                                fresh_jwt_required)
 from flask_restful import Resource
 
 from utils.blacklist_helpers import add_token_to_database, get_user_tokens, prune_database
@@ -33,8 +34,10 @@ class TokenRefresh(Resource):
         current_user = get_current_user()
 
         # Create the new access token and save it to database
-        new_access_token = create_access_token(identity=current_user, fresh=False)
-        add_token_to_database(new_access_token, current_app.config['JWT_IDENTITY_CLAIM'])
+        new_access_token = create_access_token(
+            identity=current_user, fresh=False)
+        add_token_to_database(new_access_token,
+                              current_app.config['JWT_IDENTITY_CLAIM'])
 
         raw_response = {'refresh': True, 'access_token': new_access_token}
 
@@ -46,7 +49,8 @@ class TokenRefresh(Resource):
                 # Return the double submit values in the resulting JSON
                 # instead of in additional cookies
                 raw_response.update({
-                    'access_csrf': get_csrf_token(new_access_token)
+                    'access_csrf':
+                        get_csrf_token(new_access_token)
                 })
 
             # This header is used for Swagger-UI, it uses this header to authenticate the following requests.

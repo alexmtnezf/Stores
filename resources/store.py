@@ -67,7 +67,10 @@ class StoreResource(Resource):
             description: User not logged in
         """
         if StoreModel.find_by_name(name):
-            return {'message': "A store with name '{}' already exists.".format(name)}, 400
+            return {
+                       'message':
+                           "A store with name '{}' already exists.".format(name)
+                   }, 400
 
         store = StoreModel(name)
         try:
@@ -120,7 +123,10 @@ class StoreResource(Resource):
     def check_exists_400(self, name):
         store = StoreModel.find_by_name(name)
         if store:
-            abort(400, message="A store with name '{}' already exists.".format(name))
+            abort(
+                400,
+                message="A store with name '{}' already exists.".format(name))
+
 
 class StoreListResource(Resource):
     @jwt_optional

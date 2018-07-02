@@ -26,10 +26,6 @@ class ItemTest(UnitBaseTest):
         :return: None
         """
         item = ItemModel(price=19.99, name='test', store_id=1)
-        expected = {
-            'name': 'test',
-            'price': 19.99,
-            'store_id': 1
-        }
+        expected = {'name': 'test', 'price': 19.99, 'store_id': 1}
 
         self.assertDictEqual(expected, item.json())

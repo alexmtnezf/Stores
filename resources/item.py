@@ -13,20 +13,15 @@ from utils import notifications
 
 class ItemResource(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('price',
-                        type=float,
-                        required=True,
-                        help="This field cannot be left blank!")
+    parser.add_argument(
+        'price',
+        type=float,
+        required=True,
+        help="This field cannot be left blank!")
 
-    parser.add_argument('store_id',
-                        type=int,
-                        required=True,
-                        help="Every item needs a store!")
+    parser.add_argument(
+        'store_id', type=int, required=True, help="Every item needs a store!")
 
-    parser.add_argument('user_id',
-                        type=int,
-                        required=True,
-                        help="User id is required!")
     @jwt_required
     def get(self, name):
         item = ItemModel.find_by_name(name)
@@ -50,7 +45,8 @@ class ItemResource(Resource):
                   type: integer
                   required: true
                 price:
-                  type: decimal
+                  type: number
+                  format: double
                   required: true
           - in: path
             name: name
@@ -66,15 +62,18 @@ class ItemResource(Resource):
             description: Authorization required
         """
         if ItemModel.find_by_name(name):
-            return {'message': "An item with name '{}' already exists.".format(name)}, 400
+            return {
+                       'message':
+                           "An item with name '{}' already exists.".format(name)
+                   }, 400
 
         data = ItemResource.parser.parse_args()
         item = ItemModel(name, **data)
 
         try:
             item.save_to_db()
-        except:
-            return {"message": "An error occurred inserting the item."}, 500
+        except Exception as ex:
+            return {"message": str(ex)}, 500
 
         current_user = get_jwt_identity()
         try:
@@ -82,7 +81,8 @@ class ItemResource(Resource):
                 from_name=current_user,
                 to_phone='+12106105564',
                 to_name='Alex',
-                text='New Item with name {} and price {} was added.'.format(item.name, item.price))
+                text='New Item with name {} and price {} was added.'.format(
+                    item.name, item.price))
         except TwilioRestException as ex:
             return {'message': ex.msg}, 500
 
@@ -131,7 +131,14 @@ class ItemResource(Resource):
           - in: body
             name: body
             schema:
-              $ref: '#/definitions/Item'
+              properties:
+                store_id:
+                  type: integer
+                  required: true
+                price:
+                  type: number
+                  format: double
+                  required: true
           - in: path
             name: name
             required: true

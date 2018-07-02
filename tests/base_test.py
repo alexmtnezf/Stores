@@ -14,7 +14,7 @@ from db import db
 
 class BaseTest(TestCase):
     # Class variables
-    SQLALCHEMY_DATABASE_URI = "sqlite:///"
+    SQLALCHEMY_DATABASE_URI = "postgresql://test:test@localhost:5432/store"  # "sqlite:///"
     BASE_API_URL = flaskApp.config['BASE_API_URL']
 
     @classmethod
@@ -28,14 +28,15 @@ class BaseTest(TestCase):
 
         # For PostgreSQL in production: postgresql://user:password@localhost:port/database
         # Configure once the database uri for all tests
-        flaskApp.config['SQLALCHEMY_DATABASE_URI'] = BaseTest.SQLALCHEMY_DATABASE_URI
+        flaskApp.config[
+            'SQLALCHEMY_DATABASE_URI'] = BaseTest.SQLALCHEMY_DATABASE_URI
         flaskApp.config['DEBUG'] = False
+        flaskApp.config['SQLALCHEMY_ECHO'] = False
         flaskApp.config['PROPAGATE_EXCEPTIONS'] = True
 
         # Initialize our database once for every test suite (every test file that contains a BaseTest derived class)
         with flaskApp.app_context():
             db.init_app(flaskApp)
-
 
     def setUp(self):
         """
