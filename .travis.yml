@@ -10,6 +10,7 @@ python:
   #- "nightly" # currently points to 3.7-dev
 # command to install dependencies
 install:
+  - "pip install --upgrade pip"
   - "pip install pipenv"
   - "pip install pytest"
   - "pipenv install"
