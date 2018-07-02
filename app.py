@@ -319,7 +319,7 @@ def missing_token_callback(error):
 
 
 @jwt.needs_fresh_token_loader
-def token_not_fresh_callback(error):
+def token_not_fresh_callback():
     return jsonify({
         'description':
             'Fresh token required, this token is not fresh',
