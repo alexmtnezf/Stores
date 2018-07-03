@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/alexmtnezf/Stores.svg?branch=master)](https://travis-ci.org/alexmtnezf/Stores)
 
 # Stores
-This is built with Flask, Flask-RESTful, Flask-JWT, and Flask-SQLAlchemy.
+This is built with Flask, Flask-RESTful, Flask-JWT-Extended, and Flask-SQLAlchemy.
 
 # Installation
 To get started:
