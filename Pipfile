@@ -18,7 +18,7 @@ flasgger = "*"
 passlib = "*"
 flask-jwt-extended = "*"
 gunicorn = "*"
-
+gevent = "*"
 
 [dev-packages]
 

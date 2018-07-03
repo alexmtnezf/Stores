@@ -32,79 +32,11 @@ BASE_DIR = Path(__file__).resolve().parent
 
 # Create a local.env file in the settings directory
 # But ideally this env file should be outside the git repo
-env_file = Path(__file__).resolve().parent / 'local.env'
+env_file = BASE_DIR / 'local.env'
 if env_file.exists():
     environ.Env.read_env(str(env_file))
 
 env = environ.Env()
-
-# Log everything to the logs directory at the top
-# LOGFILE_ROOT = BASE_DIR / 'logs'
-# LOGGING = {
-#     'version': 1,
-#     'formatters': {
-#         'default': {
-#             'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
-#         },
-#         'verbose': {
-#             'format':
-#                 "[%(asctime)s] %(levelname)s [%(pathname)s:%(lineno)s] %(message)s",
-#             'datefmt':
-#                 "%d/%b/%Y %H:%M:%S"
-#         },
-#         'simple': {
-#             'format': '%(levelname)s %(message)s'
-#         },
-#     },
-#     'handlers': {
-#         'wsgi': {
-#             'class': 'logging.StreamHandler',
-#             'stream': 'ext://flask.logging.wsgi_errors_stream',
-#             'formatter': 'default'
-#         },
-#         'flask_log_handler': {
-#             'level': 'DEBUG',
-#             'class': 'logging.FileHandler',
-#             'stream': 'ext://flask.logging.wsgi_errors_stream',
-#             'filename': str(LOGFILE_ROOT / 'flask.log'),
-#             'formatter': 'verbose'
-#         },
-#         'proj_log_handler': {
-#             'level': 'DEBUG',
-#             'class': 'logging.FileHandler',
-#             'filename': str(LOGFILE_ROOT / 'project.log'),
-#             'formatter': 'verbose'
-#         },
-#         'email_handler': {
-#
-#         },
-#         'console': {
-#             'level': 'DEBUG',
-#             'class': 'logging.StreamHandler',
-#             'formatter': 'simple'
-#         }
-#     },
-#     'root': {
-#         'level': 'INFO',
-#         'handlers': ['wsgi'] if env('FLASK_DEBUG', default=True) is True else
-#         ['flask_log_file', 'proj_log_file', 'email_handler']
-#     }
-# }
-#
-# dictConfig(LOGGING)
-
-# if not env('FLASK_DEBUG', default=True):
-#     from logging.handlers import SMTPHandler
-#
-#     mail_handler = SMTPHandler(
-#         mailhost='smtp.google.com',
-#         fromaddr='alexmtnezf@gmail.com',
-#         toaddrs=['alexmtnezf@gmail.com'],
-#         subject='Application Error')
-#     mail_handler.setLevel(logging.ERROR)
-#     mail_handler.setFormatter(
-#         logging.Formatter(
-#             '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
 
 # Prevent WSGI from correcting the casing of the Location header
 BaseResponse.autocorrect_location_header = False
@@ -115,55 +47,73 @@ tmpl_dir = os.path.join(
 # Creating our flask app and configure it through its config dictionary
 flaskApp = Flask(__name__, template_folder=tmpl_dir)
 
-# -----------
-# Middlewares
-# -----------
-"""
-https://github.com/kennethreitz/httpbin/issues/340
-Adds a middleware to provide chunked request encoding support running under
-gunicorn only.
-Werkzeug required environ 'wsgi.input_terminated' to be set otherwise it
-empties the input request stream.
-- gunicorn seems to support input_terminated but does not add the environ,
-  so we add it here.
-- flask will hang and does not seem to properly terminate the request, so
-  we explicitly deny chunked requests.
-"""
-
-
-@flaskApp.before_request
-def before_request():
-    if request.environ.get('HTTP_TRANSFER_ENCODING', '').lower() == 'chunked':
-        server = request.environ.get('SERVER_SOFTWARE', '')
-        if server.lower().startswith('gunicorn/'):
-            if 'wsgi.input_terminated' in request.environ:
-                flaskApp.logger.debug(
-                    "environ wsgi.input_terminated already set, keeping: %s" %
-                    request.environ['wsgi.input_terminated'])
-            else:
-                request.environ['wsgi.input_terminated'] = 1
-        else:
-            abort(501,
-                  "Chunked requests are not supported for server %s" % server)
-
-
-@flaskApp.after_request
-def set_cors_headers(response):
-    response.headers['Access-Control-Allow-Origin'] = request.headers.get(
-        'Origin', '*')
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-
-    if request.method == 'OPTIONS':
-        # Both of these headers are only used for the "preflight request"
-        # http://www.w3.org/TR/cors/#access-control-allow-methods-response-header
-        response.headers[
-            'Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, PATCH, OPTIONS'
-        response.headers['Access-Control-Max-Age'] = '3600'  # 1 hour cache
-        if request.headers.get('Access-Control-Request-Headers') is not None:
-            response.headers['Access-Control-Allow-Headers'] = request.headers[
-                'Access-Control-Request-Headers']
-    return response
-
+#
+# if flaskApp.debug:
+#     # Log everything to the logs directory at the top
+#     from logging.config import dictConfig
+#     LOGFILE_ROOT = BASE_DIR / 'logs'
+#     LOGGING = {
+#         'version': 1,
+#         'formatters': {
+#             'default': {
+#                 'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+#             },
+#             'verbose': {
+#                 'format':
+#                     "[%(asctime)s] %(levelname)s [%(pathname)s:%(lineno)s] %(message)s",
+#                 'datefmt':
+#                     "%b/%d/%Y %H:%M:%S"
+#             },
+#             'simple': {
+#                 'format': '%(levelname)s %(message)s'
+#             },
+#         },
+#         'handlers': {
+#             'wsgi': {
+#                 'class': 'logging.StreamHandler',
+#                 'stream': 'ext://flask.logging.wsgi_errors_stream',
+#                 'formatter': 'default'
+#             },
+#             'proj_log_handler': {
+#                 'level': 'DEBUG',
+#                 'class': 'logging.FileHandler',
+#                 'filename': str(LOGFILE_ROOT / 'project.log'),
+#                 'formatter': 'default'
+#             },
+#             'console': {
+#                 'level': 'DEBUG',
+#                 'class': 'logging.StreamHandler',
+#                 'formatter': 'simple'
+#             }
+#         },
+#         'root': {
+#             'level': 'INFO',
+#             'handlers': ['wsgi', 'proj_log_handler']
+#         }
+#     }
+#
+#     dictConfig(LOGGING)
+#
+# else:
+#     import logging
+#     from flask.logging import default_handler
+#     from logging.handlers import SMTPHandler
+#     # Removing the Default Handler
+#     flaskApp.logger.removeHandler(default_handler)
+#
+#
+#     mail_handler = SMTPHandler(
+#         mailhost='smtp.google.com',
+#         fromaddr='alexmtnezf@gmail.com',
+#         toaddrs=['alexmtnezf@gmail.com'],
+#         subject='Application Error')
+#     mail_handler.setLevel(logging.ERROR)
+#     mail_handler.setFormatter(
+#         logging.Formatter(
+#             '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
+#
+#     flaskApp.logger.addHandler(mail_handler)
+#
 
 flaskApp.config['DEBUG'] = bool(env('FLASK_DEBUG', default=True))
 flaskApp.config['ENV'] = env(
@@ -225,6 +175,56 @@ flaskApp.config['JWT_REFRESH_CSRF_COOKIE_PATH'] = flaskApp.config[
 # Add support of token blacklisting
 flaskApp.config['JWT_BLACKLIST_ENABLED'] = True
 flaskApp.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
+
+# -----------
+# Middlewares
+# -----------
+"""
+https://github.com/kennethreitz/httpbin/issues/340
+Adds a middleware to provide chunked request encoding support running under
+gunicorn only.
+Werkzeug required environ 'wsgi.input_terminated' to be set otherwise it
+empties the input request stream.
+- gunicorn seems to support input_terminated but does not add the environ,
+  so we add it here.
+- flask will hang and does not seem to properly terminate the request, so
+  we explicitly deny chunked requests.
+"""
+
+
+@flaskApp.before_request
+def before_request():
+    if request.environ.get('HTTP_TRANSFER_ENCODING', '').lower() == 'chunked':
+        server = request.environ.get('SERVER_SOFTWARE', '')
+        if server.lower().startswith('gunicorn/'):
+            if 'wsgi.input_terminated' in request.environ:
+                flaskApp.logger.debug(
+                    "environ wsgi.input_terminated already set, keeping: %s" %
+                    request.environ['wsgi.input_terminated'])
+            else:
+                request.environ['wsgi.input_terminated'] = 1
+        else:
+            abort(501,
+                  "Chunked requests are not supported for server %s" % server)
+
+
+@flaskApp.after_request
+def set_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = request.headers.get(
+        'Origin', '*')
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+
+    if request.method == 'OPTIONS':
+        # Both of these headers are only used for the "preflight request"
+        # http://www.w3.org/TR/cors/#access-control-allow-methods-response-header
+        response.headers[
+            'Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, PATCH, OPTIONS'
+        response.headers['Access-Control-Max-Age'] = '3600'  # 1 hour cache
+        if request.headers.get('Access-Control-Request-Headers') is not None:
+            response.headers['Access-Control-Allow-Headers'] = request.headers[
+                'Access-Control-Request-Headers']
+    return response
+
 
 # Initializing JWTManager for JWT token authentication and authorization
 jwt = JWTManager(flaskApp)
@@ -504,8 +504,6 @@ api.add_resource(TodoList, '/todos')
 api.add_resource(Todo, '/todos/<todo_id>')
 
 
-
-#
 # @flaskApp.errorhandler(Exception)
 # def errorHandler(error):
 #     """
