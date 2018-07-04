@@ -7,7 +7,7 @@ VENV=`pipenv --venv`
 #cd $VENV
 source $VENV/bin/activate
 
-gunicorn --check-config gunicorn.conf.py
-gunicorn --config gunicorn.conf.py app:app
+gunicorn --check-config gunicorn_conf.py
+gunicorn --config gunicorn_conf.py app:app
 
 exit $?
