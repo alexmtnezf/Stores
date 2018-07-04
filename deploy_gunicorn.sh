@@ -9,6 +9,6 @@ pipenv install
 pipenv shell
 
 gunicorn --check-config gunicorn_conf
-gunicorn --config gunicorn_conf gunicorn_conf:app
+gunicorn --config gunicorn_conf.py gunicorn_conf:app
 
 exit $?
