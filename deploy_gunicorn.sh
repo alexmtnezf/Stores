@@ -8,7 +8,7 @@ pipenv install
 # Activando el entorno virtual
 pipenv shell
 
-gunicorn --check-config gunicorn_conf.py
-gunicorn --config gunicorn_conf.py app:app
+gunicorn --check-config gunicorn_conf
+gunicorn --config gunicorn_conf gunicorn_conf:app
 
 exit $?
