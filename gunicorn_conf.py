@@ -27,8 +27,8 @@ limit_request_fields = 100
 
 # Server Mechanics
 pidfile = '/var/run/stores_api_webapp.pid'
-# user = 'user1'
-# group = 'nginx'
+user = 'www-data'
+group = 'www-data'
 
 # Logging
 loglevel = 'error'
