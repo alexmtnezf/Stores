@@ -6,7 +6,7 @@ VENV=`pipenv --venv`
 echo $VENV
 pipenv install
 # Activando el entorno virtual
-source $VENV/bin/activate
+pipenv shell
 
 gunicorn --check-config gunicorn_conf.py
 gunicorn --config gunicorn_conf.py app:app
