@@ -8,12 +8,8 @@ pipenv install
 # Activando el entorno virtual
 pipenv shell
 
-# Creando directorio de logs
-mkdir -p /var/log/gunicorn
-chown -R www-data:www-data /var/log/gunicorn
-
 # Ejecutando gunicorn
 gunicorn --check-config gunicorn_conf
-gunicorn --config gunicorn_conf.py gunicorn_conf:application
+gunicorn --config gunicorn_conf.py run:application
 
 exit $?

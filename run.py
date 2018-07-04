@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from multiprocessing import cpu_count
+# from multiprocessing import cpu_count
 
 from app import flaskApp as application
 from db import db
@@ -10,7 +10,7 @@ from db import db
 
 
 # Worker Processes
-workers = cpu_count() * 2 + 1  # Valor recomendado por la doc oficial: http://docs.gunicorn.org/en/stable/design.html#how-many-workers
+#workers = cpu_count() * 2 + 1  # Valor recomendado por la doc oficial: http://docs.gunicorn.org/en/stable/design.html#how-many-workers
 
 ###### End Gunicorn settings#####
 
